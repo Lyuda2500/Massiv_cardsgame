@@ -21,8 +21,8 @@ function shuffle(arr) {
 function red_or_black(cart) {
   //proverka na mast
   if (cart.includes('clubs') || cart.includes('spades')) return 'black';
-
   if (cart.includes('diamond') || cart.includes('hearts')) return 'red';
+  if (cart.includes('placeholder') || cart.includes('hearts')) return 'placeholder';
 }
 
 function weight(name) {
@@ -40,21 +40,9 @@ var BootScene = new Phaser.Class({
   preload: function () {
     // здесь будет загрузка ресурсов
 
-    this.load.atlas(
-      'placeholder',
-      'assets/cards/placeholder.png',
-      'assets/cards/placeholder_atlas.json',
-    );
-    this.load.atlas(
-      'card_shirt',
-      'assets/cards/card_shirt.png',
-      'assets/cards/card_shirt_atlas.json',
-    );
-    this.load.atlas(
-      'cards',
-      'assets/cards/cards.png',
-      'assets/cards/cards_atlas.json',
-    );
+    this.load.atlas('placeholder', 'assets/cards/placeholder.png', 'assets/cards/placeholder_atlas.json');
+    this.load.atlas('card_shirt', 'assets/cards/card_shirt.png', 'assets/cards/card_shirt_atlas.json');
+    this.load.atlas('cards', 'assets/cards/cards.png', 'assets/cards/cards_atlas.json');
   },
 
   create: function () {
@@ -94,11 +82,21 @@ var WorldScene = new Phaser.Class({
     this.name6 = [];
     this.name7 = [];
 
+    //finalnye placeholdery
+    this.out1 = [];
+    this.out2 = [];
+    this.out3 = [];
+    this.out4 = [];
+    // card names na vyhode
+    this.outname1 = [];
+    this.outname2 = [];
+    this.outname3 = [];
+    this.outname4 = [];
+
     var x = 100;
     var y = 150;
     var xx = 100;
     var yy = 378;
-
 
     this.coef = 0.8;
     this.width_card = 142;
@@ -112,50 +110,37 @@ var WorldScene = new Phaser.Class({
            }*/
 
     //placeholders
+    this.placehold.push(this.add.sprite(100, 150, 'placeholder', 'placeholder_14'));
+    this.placehold.push(this.add.sprite(260, 150, 'placeholder', 'placeholder_14'));
+    this.placehold.push(this.add.sprite(580, 150, 'placeholder', 'placeholder_14'));
+    this.placehold.push(this.add.sprite(740, 150, 'placeholder', 'placeholder_14'));
+    this.placehold.push(this.add.sprite(900, 150, 'placeholder', 'placeholder_14'));
+    this.placehold.push(this.add.sprite(1060, 150, 'placeholder', 'placeholder_14')); /*
     this.placehold.push(
-      this.add.sprite(100, 150, 'placeholder', 'placeholder'),
+      this.add.sprite(100, 378, 'placeholder', 'placeholder_14'),
     );
     this.placehold.push(
-      this.add.sprite(260, 150, 'placeholder', 'placeholder'),
+      this.add.sprite(260, 378, 'placeholder', 'placeholder_14'),
     );
     this.placehold.push(
-      this.add.sprite(580, 150, 'placeholder', 'placeholder'),
+      this.add.sprite(420, 378, 'placeholder', 'placeholder_14'),
     );
     this.placehold.push(
-      this.add.sprite(740, 150, 'placeholder', 'placeholder'),
+      this.add.sprite(580, 378, 'placeholder', 'placeholder_14'),
     );
     this.placehold.push(
-      this.add.sprite(900, 150, 'placeholder', 'placeholder'),
+      this.add.sprite(740, 378, 'placeholder', 'placeholder_14'),
     );
     this.placehold.push(
-      this.add.sprite(1060, 150, 'placeholder', 'placeholder'),
-    );
-
-    this.placehold.push(
-      this.add.sprite(100, 378, 'placeholder', 'placeholder'),
+      this.add.sprite(900, 378, 'placeholder', 'placeholder_14'),
     );
     this.placehold.push(
-      this.add.sprite(260, 378, 'placeholder', 'placeholder'),
-    );
-    this.placehold.push(
-      this.add.sprite(420, 378, 'placeholder', 'placeholder'),
-    );
-    this.placehold.push(
-      this.add.sprite(580, 378, 'placeholder', 'placeholder'),
-    );
-    this.placehold.push(
-      this.add.sprite(740, 378, 'placeholder', 'placeholder'),
-    );
-    this.placehold.push(
-      this.add.sprite(900, 378, 'placeholder', 'placeholder'),
-    );
-    this.placehold.push(
-      this.add.sprite(1060, 378, 'placeholder', 'placeholder'),
-    );
+      this.add.sprite(1060, 378, 'placeholder', 'placeholder_14'),
+    );//*/
 
     //vykladka rubashki
     this.shirt.push(this.add.sprite(100, 150, 'card_shirt', 'card_shirt'));
-    this.shirt[0].setDepth(52);
+    this.shirt[0].setDepth(1);
 
     //predvaritelnoe napolnenie massiva nazvanij kart
     for (var i = 1; i <= 13; i++) {
@@ -164,22 +149,17 @@ var WorldScene = new Phaser.Class({
       this.crd.push('hearts_' + i);
       this.crd.push('spades_' + i);
     }
-    /*
-            this.loadSuit({ suit: 'clubs', x: 100, y: 150, target: this.crd });
-            this.loadSuit({ suit: 'spades', x: 100, y: 150, target: this.crd });
-            this.loadSuit({ suit: 'diamond', x: 100, y: 150, target: this.crd });
-            this.loadSuit({ suit: 'hearts', x: 100, y: 150, target: this.crd });*/
 
     //peremeshivanie
     this.crd = shuffle(this.crd);
 
     // vykladka po kolonkam
-    let k = 0;
+    let k = 1;
     for (let j = 0; j < 7; j++) {
       //perehod po placeholderam
       let u = 0;
-      this.name1[u] = "placeholder";
-      this.deck1[u] = this.add.sprite(xx, yy, 'placeholder', 'placeholder');
+      this.name1[u] = 'placeholder_14';
+      this.deck1[u] = this.add.sprite(xx, yy, 'placeholder', 'placeholder_14');
       u++;
       for (let i = 0; i < j + 1; i++) {
         //vykladka kart po placeholderam
@@ -193,84 +173,65 @@ var WorldScene = new Phaser.Class({
           this.name2[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
           this.deck2[u] = this.add.sprite(xx, yy, 'cards', this.crd.pop()); //! .pop() zabiraet kartu iz kolody
           if (i == j) this.deck2[u].setInteractive();
-          else
-            this.shirt[k + 1] = this.add.sprite(
-              xx,
-              yy,
-              'card_shirt',
-              'card_shirt',
-            ); //vykladka rubashek
+          else {
+            this.shirt[k] = this.add.sprite(xx, yy, 'card_shirt', 'card_shirt'); //vykladka rubashek
+            k = k + 1; //index rubashek
+          }
           u++;
         }
         if (j == 2) {
           this.name3[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
           this.deck3[u] = this.add.sprite(xx, yy, 'cards', this.crd.pop()); //! .pop() zabiraet kartu iz kolody
           if (i == j) this.deck3[u].setInteractive();
-          else
-            this.shirt[k + 1] = this.add.sprite(
-              xx,
-              yy,
-              'card_shirt',
-              'card_shirt',
-            ); //vykladka rubashek
+          else {
+            this.shirt[k] = this.add.sprite(xx, yy, 'card_shirt', 'card_shirt'); //vykladka rubashek
+            k = k + 1; //index rubashek
+          }
           u++;
         }
         if (j == 3) {
           this.name4[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
           this.deck4[u] = this.add.sprite(xx, yy, 'cards', this.crd.pop()); //! .pop() zabiraet kartu iz kolody
           if (i == j) this.deck4[u].setInteractive();
-          else
-            this.shirt[k + 1] = this.add.sprite(
-              xx,
-              yy,
-              'card_shirt',
-              'card_shirt',
-            ); //vykladka rubashek
+          else {
+            this.shirt[k] = this.add.sprite(xx, yy, 'card_shirt', 'card_shirt'); //vykladka rubashek
+            k = k + 1; //index rubashek
+          }
           u++;
         }
         if (j == 4) {
           this.name5[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
           this.deck5[u] = this.add.sprite(xx, yy, 'cards', this.crd.pop()); //! .pop() zabiraet kartu iz kolody
           if (i == j) this.deck5[u].setInteractive();
-          else
-            this.shirt[k + 1] = this.add.sprite(
-              xx,
-              yy,
-              'card_shirt',
-              'card_shirt',
-            ); //vykladka rubashek
+          else {
+            this.shirt[k] = this.add.sprite(xx, yy, 'card_shirt', 'card_shirt'); //vykladka rubashek
+            k = k + 1; //index rubashek
+          }
           u++;
         }
         if (j == 5) {
           this.name6[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
           this.deck6[u] = this.add.sprite(xx, yy, 'cards', this.crd.pop()); //! .pop() zabiraet kartu iz kolody
           if (i == j) this.deck6[u].setInteractive();
-          else
-            this.shirt[k + 1] = this.add.sprite(
-              xx,
-              yy,
-              'card_shirt',
-              'card_shirt',
-            ); //vykladka rubashek
+          else {
+            this.shirt[k] = this.add.sprite(xx, yy, 'card_shirt', 'card_shirt'); //vykladka rubashek
+            k = k + 1; //index rubashek
+          }
           u++;
         }
         if (j == 6) {
           this.name7[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
           this.deck7[u] = this.add.sprite(xx, yy, 'cards', this.crd.pop()); //! .pop() zabiraet kartu iz kolody
           if (i == j) this.deck7[u].setInteractive();
-          else
-            this.shirt[k + 1] = this.add.sprite(
-              xx,
-              yy,
-              'card_shirt',
-              'card_shirt',
-            ); //vykladka rubashek
+          else {
+            this.shirt[k] = this.add.sprite(xx, yy, 'card_shirt', 'card_shirt'); //vykladka rubashek
+            k = k + 1; //index rubashek
+          }
           u++;
         }
 
         yy += y_shift; //smeshchenie po y
         //console.log("deck = " + this.deck[k]);
-        k = k + 1; //index kart v igre
       }
       xx += this.width_card + 18; //peremeschenie na sledujuschij placeholder
       yy = 378; //vozvrat pozicii y na placeholder
@@ -278,7 +239,7 @@ var WorldScene = new Phaser.Class({
 
     this.input.on('pointerdown', this.startDrag, this);
   },
-// nachinaem dvigat
+  //! nachinaem dvigat
   startDrag(pointer, targets) {
     this.dragObj = targets[0];
     this.name_card = 'null';
@@ -294,7 +255,7 @@ var WorldScene = new Phaser.Class({
       this.xstart = this.dragObj.x;
       this.ystart = this.dragObj.y;
 
-      this.dragObj.setDepth(54);
+      this.dragObj.setDepth(2);
 
       if (this.xstart == 100) {
         this.name_card = this.name1[this.name1.length - 1];
@@ -313,6 +274,7 @@ var WorldScene = new Phaser.Class({
       }
       if (this.xstart == 580) {
         this.name_card = this.name4[this.name4.length - 1];
+        this.pl = 4;
         this.w = weight(this.name_card);
       }
       if (this.xstart == 740) {
@@ -332,11 +294,10 @@ var WorldScene = new Phaser.Class({
       }
 
       console.log('Name card - ' + this.name_card);
-      console.log('red - ' + red_or_black(this.name_card));//*/
+      console.log('red - ' + red_or_black(this.name_card)); //*/
 
       this.input.on('pointermove', this.doDrag, this);
       this.input.on('pointerup', this.stopDrag, this);
-      //this.dragObj.
     }
   },
 
@@ -350,7 +311,7 @@ var WorldScene = new Phaser.Class({
     this.input.on('pointerdown', this.startDrag, this);
     this.input.off('pointermove', this.doDrag, this);
     this.input.off('pointerup', this.stopDrag, this);
-    this.dragObj.setDepth(53);
+    this.dragObj.setDepth(0);
     /*
     100 180
     260 340
@@ -361,20 +322,40 @@ var WorldScene = new Phaser.Class({
     1060
     */
     if (pointer.y < 378) {
+      // out placeholder 1
+      if (pointer.x > 340 && pointer.x < 660) {
+      }
+      // out placeholder 2
+      if (pointer.x > 659 && pointer.x < 820) {
+      }
+      // out placeholder 3
+      if (pointer.x > 819 && pointer.x < 980) {
+      }
+      // out placeholder 4
+      if (pointer.x > 979) {
+      }
+
       this.dragObj.x = this.xstart;
       this.dragObj.y = this.ystart;
     } else {
       //placeholder-1
       if (pointer.x < 180) {
-        if ((red_or_black(this.name1[this.name1.length - 1]) !=  red_or_black(this.name_card)) && this.w+1 == weight(this.name1[this.name1.length - 1]) ) {
-          this.dragObj.x = 100;
-          this.dragObj.y = 378 + (this.name1.length)*y_shift ;
-          //!peremeschenie karty mejdu massivami
-          this.name1[this.name1.length] = eval('this.name' + this.pl + '.pop()');
-          this.deck1[this.deck1.length] = eval('this.deck' + this.pl + '.pop()');
-          this.deck1[this.deck1.length - 2].disableInteractive();
-          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-          //! -- konec peremeschenija
+        //console.log("Place - " + red_or_black(this.name1[this.name1.length - 1]));
+        if (red_or_black(this.name1[this.name1.length - 1]) != red_or_black(this.name_card) || red_or_black(this.name1[this.name1.length - 1]) == 'placeholder') {
+          if (this.w + 1 == weight(this.name1[this.name1.length - 1])) {
+            this.dragObj.x = 100;
+            this.dragObj.y = 378 + (this.name1.length - 1) * y_shift;
+            //!peremeschenie karty mejdu massivami
+            this.name1[this.name1.length] = eval('this.name' + this.pl + '.pop()');
+            this.deck1[this.deck1.length] = eval('this.deck' + this.pl + '.pop()');
+            this.deck1[this.deck1.length - 2].disableInteractive();
+            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+            this.remove_shirt(this.pl);
+            //! -- konec peremeschenija
+          } else {
+            this.dragObj.x = this.xstart;
+            this.dragObj.y = this.ystart;
+          }
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
@@ -382,16 +363,22 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-2
       if (pointer.x > 179 && pointer.x < 340) {
-        if ((red_or_black(this.name2[this.name2.length - 1]) !=  red_or_black(this.name_card)) && this.w+1 == weight(this.name2[this.name2.length - 1])) {
-          this.dragObj.x = 260;
-          this.dragObj.y = 378 + (this.name2.length)*y_shift ;
-          //this.dragObj.y = 378;
-          //!peremeschenie karty mejdu massivami
-          this.name2[this.name2.length] = eval('this.name' + this.pl + '.pop()');
-          this.deck2[this.deck2.length] = eval('this.deck' + this.pl + '.pop()');
-          this.deck2[this.deck2.length - 2].disableInteractive();
-          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-          //! -- konec peremeschenija
+        if (red_or_black(this.name2[this.name2.length - 1]) != red_or_black(this.name_card) || red_or_black(this.name2[this.name2.length - 1]) == 'placeholder') {
+          if (this.w + 1 == weight(this.name2[this.name2.length - 1])) {
+            this.dragObj.x = 260;
+            this.dragObj.y = 378 + (this.name2.length - 1) * y_shift;
+            //this.dragObj.y = 378;
+            //!peremeschenie karty mejdu massivami
+            this.name2[this.name2.length] = eval('this.name' + this.pl + '.pop()');
+            this.deck2[this.deck2.length] = eval('this.deck' + this.pl + '.pop()');
+            this.deck2[this.deck2.length - 2].disableInteractive();
+            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+            this.remove_shirt(this.pl);
+            //! -- konec peremeschenija
+          } else {
+            this.dragObj.x = this.xstart;
+            this.dragObj.y = this.ystart;
+          }
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
@@ -399,15 +386,21 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-3
       if (pointer.x > 339 && pointer.x < 500) {
-        if ((red_or_black(this.name3[this.name3.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name3[this.name3.length - 1]) ) {
-          this.dragObj.x = 420;
-          this.dragObj.y = 378 + (this.name3.length)*y_shift ;
-           //!peremeschenie karty mejdu massivami
-           this.name3[this.name3.length] = eval('this.name' + this.pl + '.pop()');
-           this.deck3[this.deck3.length] = eval('this.deck' + this.pl + '.pop()');
-           this.deck3[this.deck3.length - 2].disableInteractive();
-           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-           //! -- konec peremeschenija
+        if (red_or_black(this.name3[this.name3.length - 1]) != red_or_black(this.name_card) || red_or_black(this.name3[this.name3.length - 1]) == 'placeholder') {
+          if (this.w + 1 == weight(this.name3[this.name3.length - 1])) {
+            this.dragObj.x = 420;
+            this.dragObj.y = 378 + (this.name3.length - 1) * y_shift;
+            //!peremeschenie karty mejdu massivami
+            this.name3[this.name3.length] = eval('this.name' + this.pl + '.pop()');
+            this.deck3[this.deck3.length] = eval('this.deck' + this.pl + '.pop()');
+            this.deck3[this.deck3.length - 2].disableInteractive();
+            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+            this.remove_shirt(this.pl);
+            //! -- konec peremeschenija
+          } else {
+            this.dragObj.x = this.xstart;
+            this.dragObj.y = this.ystart;
+          }
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
@@ -415,15 +408,21 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-4
       if (pointer.x > 499 && pointer.x < 660) {
-        if ((red_or_black(this.name4[this.name4.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name4[this.name4.length - 1]) ) {
-          this.dragObj.x = 580;
-          this.dragObj.y = 378 + (this.name4.length)*y_shift ;
-           //!peremeschenie karty mejdu massivami
-           this.name4[this.name4.length] = eval('this.name' + this.pl + '.pop()');
-           this.deck4[this.deck4.length] = eval('this.deck' + this.pl + '.pop()');
-           this.deck4[this.deck4.length - 2].disableInteractive();
-           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-           //! -- konec peremeschenija
+        if (red_or_black(this.name4[this.name4.length - 1]) != red_or_black(this.name_card) || red_or_black(this.name4[this.name4.length - 1]) == 'placeholder') {
+          if (this.w + 1 == weight(this.name4[this.name4.length - 1])) {
+            this.dragObj.x = 580;
+            this.dragObj.y = 378 + (this.name4.length - 1) * y_shift;
+            //!peremeschenie karty mejdu massivami
+            this.name4[this.name4.length] = eval('this.name' + this.pl + '.pop()');
+            this.deck4[this.deck4.length] = eval('this.deck' + this.pl + '.pop()');
+            this.deck4[this.deck4.length - 2].disableInteractive();
+            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+            this.remove_shirt(this.pl);
+            //! -- konec peremeschenija
+          } else {
+            this.dragObj.x = this.xstart;
+            this.dragObj.y = this.ystart;
+          }
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
@@ -431,17 +430,21 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-5
       if (pointer.x > 659 && pointer.x < 820) {
-        if (
-          (red_or_black(this.name5[this.name5.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name5[this.name5.length - 1]) 
-        ) {
-          this.dragObj.x = 740;
-          this.dragObj.y = 378 + (this.name5.length)*y_shift ;
-           //!peremeschenie karty mejdu massivami
-           this.name5[this.name5.length] = eval('this.name' + this.pl + '.pop()');
-           this.deck5[this.deck5.length] = eval('this.deck' + this.pl + '.pop()');
-           this.deck5[this.deck5.length - 2].disableInteractive();
-           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-           //! -- konec peremeschenija
+        if (red_or_black(this.name5[this.name5.length - 1]) != red_or_black(this.name_card) || red_or_black(this.name5[this.name5.length - 1]) == 'placeholder') {
+          if (this.w + 1 == weight(this.name5[this.name5.length - 1])) {
+            this.dragObj.x = 740;
+            this.dragObj.y = 378 + (this.name5.length - 1) * y_shift;
+            //!peremeschenie karty mejdu massivami
+            this.name5[this.name5.length] = eval('this.name' + this.pl + '.pop()');
+            this.deck5[this.deck5.length] = eval('this.deck' + this.pl + '.pop()');
+            this.deck5[this.deck5.length - 2].disableInteractive();
+            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+            this.remove_shirt(this.pl);
+            //! -- konec peremeschenija
+          } else {
+            this.dragObj.x = this.xstart;
+            this.dragObj.y = this.ystart;
+          }
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
@@ -449,17 +452,21 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-6
       if (pointer.x > 819 && pointer.x < 980) {
-        if (
-          (red_or_black(this.name6[this.name6.length - 1]) != red_or_black(this.name_card))&& this.w+1 == weight(this.name6[this.name6.length - 1]) 
-        ) {
-          this.dragObj.x = 900;
-          this.dragObj.y = 378 + (this.name6.length)*y_shift ;
-           //!peremeschenie karty mejdu massivami
-           this.name6[this.name6.length] = eval('this.name' + this.pl + '.pop()');
-           this.deck6[this.deck6.length] = eval('this.deck' + this.pl + '.pop()');
-           this.deck6[this.deck6.length - 2].disableInteractive();
-           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-           //! -- konec peremeschenija
+        if (red_or_black(this.name6[this.name6.length - 1]) != red_or_black(this.name_card) || red_or_black(this.name6[this.name6.length - 1]) == 'placeholder') {
+          if (this.w + 1 == weight(this.name6[this.name6.length - 1])) {
+            this.dragObj.x = 900;
+            this.dragObj.y = 378 + (this.name6.length - 1) * y_shift;
+            //!peremeschenie karty mejdu massivami
+            this.name6[this.name6.length] = eval('this.name' + this.pl + '.pop()');
+            this.deck6[this.deck6.length] = eval('this.deck' + this.pl + '.pop()');
+            this.deck6[this.deck6.length - 2].disableInteractive();
+            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+            this.remove_shirt(this.pl);
+            //! -- konec peremeschenija
+          } else {
+            this.dragObj.x = this.xstart;
+            this.dragObj.y = this.ystart;
+          }
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
@@ -467,146 +474,69 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-7
       if (pointer.x > 979) {
-        if (
-          (red_or_black(this.name7[this.name7.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name7[this.name7.length - 1]) 
-        ) {
-          this.dragObj.x = 1060;
-          this.dragObj.y = 378 + (this.name7.length)*y_shift ;
-           //!peremeschenie karty mejdu massivami
-           this.name7[this.name7.length] = eval('this.name' + this.pl + '.pop()');
-           this.deck7[this.deck7.length] = eval('this.deck' + this.pl + '.pop()');
-           this.deck7[this.deck7.length - 2].disableInteractive(); 
-           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-           //! -- konec peremeschenija
+        if (red_or_black(this.name7[this.name7.length - 1]) != red_or_black(this.name_card) || red_or_black(this.name7[this.name7.length - 1]) == 'placeholder') {
+          if (this.w + 1 == weight(this.name7[this.name7.length - 1])) {
+            this.dragObj.x = 1060;
+            this.dragObj.y = 378 + (this.name7.length - 1) * y_shift;
+            //!peremeschenie karty mejdu massivami
+            this.name7[this.name7.length] = eval('this.name' + this.pl + '.pop()');
+            this.deck7[this.deck7.length] = eval('this.deck' + this.pl + '.pop()');
+            this.deck7[this.deck7.length - 2].disableInteractive();
+            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+            this.remove_shirt(this.pl);
+            //! -- konec peremeschenija
+          } else {
+            this.dragObj.x = this.xstart;
+            this.dragObj.y = this.ystart;
+          }
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
         }
       }
     }
+  },
 
-    /*switch (true) {
-        //vlevo
-        case pointer.x < this.xstart - 880:
-          if (pointer.x < 180) {
-            this.dragObj.x = 100;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart - 960;
-          this.dragObj.y = 378;
-          break;
-        case pointer.x < this.xstart - 720:
-          if (pointer.x < 180) {
-            this.dragObj.x = 100;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart - 800;
-          this.dragObj.y = 378;
-          break;
-        case pointer.x < this.xstart - 560:
-          if (pointer.x < 180) {
-            this.dragObj.x = 100;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart - 640;
-          this.dragObj.y = 378;
-          break;
-        case pointer.x < this.xstart - 400:
-          if (pointer.x < 180) {
-            this.dragObj.x = 100;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart - 480;
-          this.dragObj.y = 378;
-          break;
-        case pointer.x < this.xstart - 240:
-          if (pointer.x < 180) {
-            this.dragObj.x = 100;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart - 320;
-          this.dragObj.y = 378;
-          break;
-        case pointer.x < this.xstart - 80:
-          if (pointer.x < 180) {
-            this.dragObj.x = 100;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart - 160;
-          this.dragObj.y = 378;
-          break;
-
-        //vpravo
-        case pointer.x > this.xstart + 880:
-          if (pointer.x > 980) {
-            this.dragObj.x = 1060;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart + 960;
-          this.dragObj.y = 378;
-          break;
-
-        case pointer.x > this.xstart + 720:
-          if (pointer.x > 980) {
-            this.dragObj.x = 1060;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart + 800;
-          this.dragObj.y = 378;
-          break;
-
-        case pointer.x > this.xstart + 560:
-          if (pointer.x > 980) {
-            this.dragObj.x = 1060;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart + 640;
-          this.dragObj.y = 378;
-          break;
-
-        case pointer.x > this.xstart + 400:
-          if (pointer.x > 980) {
-            this.dragObj.x = 1060;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart + 480;
-          this.dragObj.y = 378;
-          break;
-
-        case pointer.x > this.xstart + 240:
-          if (pointer.x > 980) {
-            this.dragObj.x = 1060;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart + 320;
-          this.dragObj.y = 378;
-          break;
-
-        case pointer.x > this.xstart + 80:
-          if (pointer.x > 980) {
-            this.dragObj.x = 1060;
-            this.dragObj.y = 378;
-            break;
-          }
-          this.dragObj.x = this.xstart + 160;
-          this.dragObj.y = 378;
-          break;
-
-        default:
-          this.dragObj.x = this.xstart;
-          this.dragObj.y = this.ystart;
-      }*/
+  remove_shirt(pos) {
+    //placeholder - 2
+    if (pos == 2) {
+      this.shirt[1].visible = false;
+    }
+    //placeholder - 3
+    if (pos == 3) {
+      if (eval('this.deck' + this.pl + '.length') == 3) this.shirt[3].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 2) this.shirt[2].visible = false;
+    }
+    //placeholder - 4
+    if (pos == 4) {
+      if (eval('this.deck' + this.pl + '.length') == 4) this.shirt[6].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 3) this.shirt[5].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 2) this.shirt[4].visible = false;
+    }
+    //placeholder - 5
+    if (pos == 5) {
+      if (eval('this.deck' + this.pl + '.length') == 5) this.shirt[10].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 4) this.shirt[9].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 3) this.shirt[8].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 2) this.shirt[7].visible = false;
+    }
+    //placeholder - 6
+    if (pos == 6) {
+      if (eval('this.deck' + this.pl + '.length') == 6) this.shirt[15].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 5) this.shirt[14].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 4) this.shirt[13].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 3) this.shirt[12].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 2) this.shirt[11].visible = false;
+    }
+    //placeholder - 7
+    if (pos == 7) {
+      if (eval('this.deck' + this.pl + '.length') == 7) this.shirt[21].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 6) this.shirt[20].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 5) this.shirt[19].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 4) this.shirt[18].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 3) this.shirt[17].visible = false;
+      if (eval('this.deck' + this.pl + '.length') == 2) this.shirt[16].visible = false;
+    }
   },
 });
 
