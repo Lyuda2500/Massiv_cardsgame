@@ -1,6 +1,8 @@
 //var crd = [];
 //var placehold = [];
 //var shirt = [];
+//! Smeschenie po vertikali
+var y_shift = 30;
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -16,7 +18,7 @@ function shuffle(arr) {
   }
   return arr;
 }
-function red(cart) {
+function red_or_black(cart) {
   //proverka na mast
   if (cart.includes('clubs') || cart.includes('spades')) return 'black';
 
@@ -90,6 +92,7 @@ var WorldScene = new Phaser.Class({
     var y = 150;
     var xx = 100;
     var yy = 378;
+
 
     this.coef = 0.8;
     this.width_card = 142;
@@ -256,7 +259,7 @@ var WorldScene = new Phaser.Class({
           u++;
         }
 
-        yy += 30; //smeshchenie po y
+        yy += y_shift; //smeshchenie po y
         //console.log("deck = " + this.deck[k]);
         k = k + 1; //index kart v igre
       }
@@ -266,10 +269,11 @@ var WorldScene = new Phaser.Class({
 
     this.input.on('pointerdown', this.startDrag, this);
   },
-
+// nachinaem dvigat
   startDrag(pointer, targets) {
     this.dragObj = targets[0];
     this.name_card = 'null';
+    this.pl = null;
     //this.red = null; // false - black, true - red
     if (this.dragObj instanceof Phaser.GameObjects.Sprite) {
       this.input.off('pointerdown', this.startDrag, this);
@@ -284,29 +288,35 @@ var WorldScene = new Phaser.Class({
 
       if (this.xstart == 100) {
         this.name_card = this.name1[this.name1.length - 1];
+        this.pl = 1;
       }
       if (this.xstart == 260) {
         this.name_card = this.name2[this.name2.length - 1];
+        this.pl = 2;
       }
       if (this.xstart == 420) {
         this.name_card = this.name3[this.name3.length - 1];
+        this.pl = 3;
       }
       if (this.xstart == 580) {
         this.name_card = this.name4[this.name4.length - 1];
+        this.pl = 4;
       }
       if (this.xstart == 740) {
         this.name_card = this.name5[this.name5.length - 1];
+        this.pl = 5;
       }
       if (this.xstart == 900) {
         this.name_card = this.name6[this.name6.length - 1];
+        this.pl = 6;
       }
       if (this.xstart == 1060) {
         this.name_card = this.name7[this.name7.length - 1];
+        this.pl = 7;
       }
 
-      console.log('Pos.X - ' + this.xstart);
-      console.log('Name - ' + this.name_card);
-      console.log('red - ' + red(this.name_card));
+      console.log('Name card - ' + this.name_card);
+      console.log('red - ' + red_or_black(this.name_card));//*/
 
       this.input.on('pointermove', this.doDrag, this);
       this.input.on('pointerup', this.stopDrag, this);
@@ -328,35 +338,145 @@ var WorldScene = new Phaser.Class({
     /*
     100 180
     260 340
-    420 600
-    580 760
-    740
-    900
+    420 500
+    580 660
+    740 820
+    900 980
     1060
     */
     if (pointer.y < 378) {
       this.dragObj.x = this.xstart;
       this.dragObj.y = this.ystart;
     } else {
+      //placeholder-1
       if (pointer.x < 180) {
-        if (red(this.name1[this.name1.length - 1]) != red(this.name_card)) {
-          /*this.deck1[this.name1.length] = this.add.sprite(
-            100,
-            378,
-            "cards",
-            this..pop()
-          ); //! .pop() zabiraet kartu iz kolody*/
+        if (
+          red_or_black(this.name1[this.name1.length - 1]) !=
+          red_or_black(this.name_card)
+        ) {
           this.dragObj.x = 100;
-          this.dragObj.y = 378;
+          this.dragObj.y = 378 + (this.name1.length)*y_shift ;
+          //!peremeschenie karty mejdu massivami
+          this.name1[this.name1.length] = eval('this.name' + this.pl + '.pop()');
+          this.deck1[this.deck1.length] = eval('this.deck' + this.pl + '.pop()');
+          this.deck1[this.deck1.length - 2].disableInteractive();
+          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+          //! -- konec peremeschenija
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
         }
       }
+      //placeholder-2
       if (pointer.x > 179 && pointer.x < 340) {
-        if (red(this.name2[this.name2.length - 1]) != red(this.name_card)) {
+        if (
+          red_or_black(this.name2[this.name2.length - 1]) !=
+          red_or_black(this.name_card)
+        ) {
           this.dragObj.x = 260;
-          this.dragObj.y = 378;
+          this.dragObj.y = 378 + (this.name2.length)*y_shift ;
+          //this.dragObj.y = 378;
+          //!peremeschenie karty mejdu massivami
+          this.name2[this.name2.length] = eval('this.name' + this.pl + '.pop()');
+          this.deck2[this.deck2.length] = eval('this.deck' + this.pl + '.pop()');
+          this.deck2[this.deck2.length - 2].disableInteractive();
+          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+          //! -- konec peremeschenija
+        } else {
+          this.dragObj.x = this.xstart;
+          this.dragObj.y = this.ystart;
+        }
+      }
+      //placeholder-3
+      if (pointer.x > 339 && pointer.x < 500) {
+        if (
+          red_or_black(this.name3[this.name3.length - 1]) !=
+          red_or_black(this.name_card)
+        ) {
+          this.dragObj.x = 420;
+          this.dragObj.y = 378 + (this.name3.length)*y_shift ;
+           //!peremeschenie karty mejdu massivami
+           this.name3[this.name3.length] = eval('this.name' + this.pl + '.pop()');
+           this.deck3[this.deck3.length] = eval('this.deck' + this.pl + '.pop()');
+           this.deck3[this.deck3.length - 2].disableInteractive();
+           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+           //! -- konec peremeschenija
+        } else {
+          this.dragObj.x = this.xstart;
+          this.dragObj.y = this.ystart;
+        }
+      }
+      //placeholder-4
+      if (pointer.x > 499 && pointer.x < 660) {
+        if (
+          red_or_black(this.name4[this.name4.length - 1]) !=
+          red_or_black(this.name_card)
+        ) {
+          this.dragObj.x = 580;
+          this.dragObj.y = 378 + (this.name4.length)*y_shift ;
+           //!peremeschenie karty mejdu massivami
+           this.name4[this.name4.length] = eval('this.name' + this.pl + '.pop()');
+           this.deck4[this.deck4.length] = eval('this.deck' + this.pl + '.pop()');
+           this.deck4[this.deck4.length - 2].disableInteractive();
+           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+           //! -- konec peremeschenija
+        } else {
+          this.dragObj.x = this.xstart;
+          this.dragObj.y = this.ystart;
+        }
+      }
+      //placeholder-5
+      if (pointer.x > 659 && pointer.x < 820) {
+        if (
+          red_or_black(this.name5[this.name5.length - 1]) !=
+          red_or_black(this.name_card)
+        ) {
+          this.dragObj.x = 740;
+          this.dragObj.y = 378 + (this.name5.length)*y_shift ;
+           //!peremeschenie karty mejdu massivami
+           this.name5[this.name5.length] = eval('this.name' + this.pl + '.pop()');
+           this.deck5[this.deck5.length] = eval('this.deck' + this.pl + '.pop()');
+           this.deck5[this.deck5.length - 2].disableInteractive();
+           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+           //! -- konec peremeschenija
+        } else {
+          this.dragObj.x = this.xstart;
+          this.dragObj.y = this.ystart;
+        }
+      }
+      //placeholder-6
+      if (pointer.x > 819 && pointer.x < 980) {
+        if (
+          red_or_black(this.name6[this.name6.length - 1]) !=
+          red_or_black(this.name_card)
+        ) {
+          this.dragObj.x = 900;
+          this.dragObj.y = 378 + (this.name6.length)*y_shift ;
+           //!peremeschenie karty mejdu massivami
+           this.name6[this.name6.length] = eval('this.name' + this.pl + '.pop()');
+           this.deck6[this.deck6.length] = eval('this.deck' + this.pl + '.pop()');
+           this.deck6[this.deck6.length - 2].disableInteractive();
+           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+           //! -- konec peremeschenija
+        } else {
+          this.dragObj.x = this.xstart;
+          this.dragObj.y = this.ystart;
+        }
+      }
+      //placeholder-7
+      if (pointer.x > 979) {
+        if (
+          red_or_black(this.name7[this.name7.length - 1]) !=
+          red_or_black(this.name_card)
+        ) {
+          this.dragObj.x = 1060;
+          this.dragObj.y = 378 + (this.name7.length)*y_shift ;
+           //!peremeschenie karty mejdu massivami
+           this.name7[this.name7.length] = eval('this.name' + this.pl + '.pop()');
+           this.deck7[this.deck7.length] = eval('this.deck' + this.pl + '.pop()');
+           this.deck7[this.deck7.length - 2].disableInteractive(); 
+           eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+           //! -- konec peremeschenija
         } else {
           this.dragObj.x = this.xstart;
           this.dragObj.y = this.ystart;
