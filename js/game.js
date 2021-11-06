@@ -22,7 +22,7 @@ function red_or_black(cart) {
   //proverka na mast
   if (cart.includes('clubs') || cart.includes('spades')) return 'black';
   if (cart.includes('diamond') || cart.includes('hearts')) return 'red';
-  if (cart.includes('placeholder') || cart.includes('hearts')) return 'placeholder';
+  if (cart.includes('placeholder')) return 'placeholder';
 }
 
 function weight(name) {
@@ -73,6 +73,7 @@ var WorldScene = new Phaser.Class({
     this.deck5 = [];
     this.deck6 = [];
     this.deck7 = [];
+
     //card names
     this.name1 = [];
     this.name2 = [];
@@ -83,15 +84,15 @@ var WorldScene = new Phaser.Class({
     this.name7 = [];
 
     //finalnye placeholdery
-    this.out1 = [];
-    this.out2 = [];
-    this.out3 = [];
-    this.out4 = [];
+    this.deck8 = [];
+    this.deck9 = [];
+    this.deck10 = [];
+    this.deck11 = [];
     // card names na vyhode
-    this.outname1 = [];
-    this.outname2 = [];
-    this.outname3 = [];
-    this.outname4 = [];
+    this.name8 = [];
+    this.name9 = [];
+    this.name10 = [];
+    this.name11 = [];
 
     var x = 100;
     var y = 150;
@@ -158,8 +159,9 @@ var WorldScene = new Phaser.Class({
     for (let j = 0; j < 7; j++) {
       //perehod po placeholderam
       let u = 0;
-      this.name1[u] = 'placeholder_14';
-      this.deck1[u] = this.add.sprite(xx, yy, 'placeholder', 'placeholder_14');
+      let jj = j + 1;
+      eval('this.name' + jj + '[u] = "placeholder_14"');
+      eval('this.deck' + jj + '[u] = this.add.sprite(xx, yy, "placeholder", "placeholder_14")');
       u++;
       for (let i = 0; i < j + 1; i++) {
         //vykladka kart po placeholderam
@@ -257,42 +259,65 @@ var WorldScene = new Phaser.Class({
 
       this.dragObj.setDepth(2);
 
-      if (this.xstart == 100) {
-        this.name_card = this.name1[this.name1.length - 1];
-        this.pl = 1;
-        this.w = weight(this.name_card);
+      if (this.ystart > 300) {
+        if (this.xstart == 100) {
+          this.name_card = this.name1[this.name1.length - 1];
+          this.pl = 1;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 260) {
+          this.name_card = this.name2[this.name2.length - 1];
+          this.pl = 2;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 420) {
+          this.name_card = this.name3[this.name3.length - 1];
+          this.pl = 3;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 580) {
+          this.name_card = this.name4[this.name4.length - 1];
+          this.pl = 4;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 740) {
+          this.name_card = this.name5[this.name5.length - 1];
+          this.pl = 5;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 900) {
+          this.name_card = this.name6[this.name6.length - 1];
+          this.pl = 6;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 1060) {
+          this.name_card = this.name7[this.name7.length - 1];
+          this.pl = 7;
+          this.w = weight(this.name_card);
+        }
+      } else {
+        if (this.xstart == 580) {
+          this.name_card = this.name8[this.name8.length - 1];
+          this.pl = 8;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 740) {
+          this.name_card = this.name9[this.name9.length - 1];
+          this.pl = 9;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 900) {
+          this.name_card = this.name10[this.name10.length - 1];
+          this.pl = 10;
+          this.w = weight(this.name_card);
+        }
+        if (this.xstart == 1060) {
+          this.name_card = this.name11[this.name11.length - 1];
+          this.pl = 11;
+          this.w = weight(this.name_card);
+        }
       }
-      if (this.xstart == 260) {
-        this.name_card = this.name2[this.name2.length - 1];
-        this.pl = 2;
-        this.w = weight(this.name_card);
-      }
-      if (this.xstart == 420) {
-        this.name_card = this.name3[this.name3.length - 1];
-        this.pl = 3;
-        this.w = weight(this.name_card);
-      }
-      if (this.xstart == 580) {
-        this.name_card = this.name4[this.name4.length - 1];
-        this.pl = 4;
-        this.w = weight(this.name_card);
-      }
-      if (this.xstart == 740) {
-        this.name_card = this.name5[this.name5.length - 1];
-        this.pl = 5;
-        this.w = weight(this.name_card);
-      }
-      if (this.xstart == 900) {
-        this.name_card = this.name6[this.name6.length - 1];
-        this.pl = 6;
-        this.w = weight(this.name_card);
-      }
-      if (this.xstart == 1060) {
-        this.name_card = this.name7[this.name7.length - 1];
-        this.pl = 7;
-        this.w = weight(this.name_card);
-      }
-
+      console.log('D - ' + eval('this.deck' + this.pl + '.length'));
       console.log('Name card - ' + this.name_card);
       console.log('red - ' + red_or_black(this.name_card)); //*/
 
@@ -305,14 +330,7 @@ var WorldScene = new Phaser.Class({
     this.dragObj.x = pointer.x;
     this.dragObj.y = pointer.y;
   },
-
-  stopDrag(pointer) {
-    // function, kotoraja vypolnyaetcya, kogda otpuskaesh knopku myshy pri peretaskivanii
-    this.input.on('pointerdown', this.startDrag, this);
-    this.input.off('pointermove', this.doDrag, this);
-    this.input.off('pointerup', this.stopDrag, this);
-    this.dragObj.setDepth(0);
-    /*
+  /*
     100 180
     260 340
     420 500
@@ -321,22 +339,71 @@ var WorldScene = new Phaser.Class({
     900 980
     1060
     */
-    if (pointer.y < 378) {
+  stopDrag(pointer) {
+    // function, kotoraja vypolnyaetcya, kogda otpuskaesh knopku myshy pri peretaskivanii
+    this.input.on('pointerdown', this.startDrag, this);
+    this.input.off('pointermove', this.doDrag, this);
+    this.input.off('pointerup', this.stopDrag, this);
+    this.dragObj.setDepth(0);
+
+    if (pointer.y < 300) {
       // out placeholder 1
       if (pointer.x > 340 && pointer.x < 660) {
+        this.dragObj.x = 580;
+        this.dragObj.y = 150 + (this.name8.length - 1) * 10;
+        //!peremeschenie karty mejdu massivami
+        this.name8[this.name8.length] = eval('this.name' + this.pl + '.pop()');
+        this.deck8[this.deck8.length] = eval('this.deck' + this.pl + '.pop()');
+        if (eval('this.deck' + this.pl + '.length') > 1) {
+          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+          this.remove_shirt(this.pl);
+        }
+        //! -- konec peremeschenija
       }
       // out placeholder 2
       if (pointer.x > 659 && pointer.x < 820) {
+        this.dragObj.x = 740;
+        this.dragObj.y = 150 + (this.name9.length - 1) * 10;
+        //!peremeschenie karty mejdu massivami
+        this.name9[this.name9.length] = eval('this.name' + this.pl + '.pop()');
+        this.deck9[this.deck9.length] = eval('this.deck' + this.pl + '.pop()');
+        if (eval('this.deck' + this.pl + '.length') > 1) {
+          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+          this.remove_shirt(this.pl);
+        }
+        //! -- konec peremeschenija
       }
       // out placeholder 3
       if (pointer.x > 819 && pointer.x < 980) {
+        this.dragObj.x = 900;
+        this.dragObj.y = 150 + (this.name10.length - 1) * 10;
+        //!peremeschenie karty mejdu massivami
+        this.name10[this.name10.length] = eval('this.name' + this.pl + '.pop()');
+        this.deck10[this.deck10.length] = eval('this.deck' + this.pl + '.pop()');
+        if (eval('this.deck' + this.pl + '.length') > 1) {
+          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+          this.remove_shirt(this.pl);
+        }
+        //! -- konec peremeschenija
       }
       // out placeholder 4
       if (pointer.x > 979) {
+        this.dragObj.x = 1060;
+        this.dragObj.y = 150 + (this.name11.length - 1) * 10;
+        //!peremeschenie karty mejdu massivami
+        this.name11[this.name11.length] = eval('this.name' + this.pl + '.pop()');
+        this.deck11[this.deck11.length] = eval('this.deck' + this.pl + '.pop()');
+        if (eval('this.deck' + this.pl + '.length') > 1) {
+          eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+          this.remove_shirt(this.pl);
+        }
+        //! -- konec peremeschenija
       }
-
-      this.dragObj.x = this.xstart;
-      this.dragObj.y = this.ystart;
+      //else
+      if (pointer.x < 340) {
+        this.dragObj.x = this.xstart;
+        this.dragObj.y = this.ystart;
+      }
     } else {
       //placeholder-1
       if (pointer.x < 180) {
@@ -348,9 +415,11 @@ var WorldScene = new Phaser.Class({
             //!peremeschenie karty mejdu massivami
             this.name1[this.name1.length] = eval('this.name' + this.pl + '.pop()');
             this.deck1[this.deck1.length] = eval('this.deck' + this.pl + '.pop()');
-            this.deck1[this.deck1.length - 2].disableInteractive();
-            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-            this.remove_shirt(this.pl);
+            //this.deck1[this.deck1.length - 2].disableInteractive();
+            if (eval('this.deck' + this.pl + '.length') > 1) {
+              eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+              this.remove_shirt(this.pl);
+            }
             //! -- konec peremeschenija
           } else {
             this.dragObj.x = this.xstart;
@@ -371,9 +440,11 @@ var WorldScene = new Phaser.Class({
             //!peremeschenie karty mejdu massivami
             this.name2[this.name2.length] = eval('this.name' + this.pl + '.pop()');
             this.deck2[this.deck2.length] = eval('this.deck' + this.pl + '.pop()');
-            this.deck2[this.deck2.length - 2].disableInteractive();
-            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-            this.remove_shirt(this.pl);
+            // this.deck2[this.deck2.length - 2].disableInteractive();
+            if (eval('this.deck' + this.pl + '.length') > 1) {
+              eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+              this.remove_shirt(this.pl);
+            }
             //! -- konec peremeschenija
           } else {
             this.dragObj.x = this.xstart;
@@ -393,9 +464,11 @@ var WorldScene = new Phaser.Class({
             //!peremeschenie karty mejdu massivami
             this.name3[this.name3.length] = eval('this.name' + this.pl + '.pop()');
             this.deck3[this.deck3.length] = eval('this.deck' + this.pl + '.pop()');
-            this.deck3[this.deck3.length - 2].disableInteractive();
-            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-            this.remove_shirt(this.pl);
+            //this.deck3[this.deck3.length - 2].disableInteractive();
+            if (eval('this.deck' + this.pl + '.length') > 1) {
+              eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+              this.remove_shirt(this.pl);
+            }
             //! -- konec peremeschenija
           } else {
             this.dragObj.x = this.xstart;
@@ -415,9 +488,11 @@ var WorldScene = new Phaser.Class({
             //!peremeschenie karty mejdu massivami
             this.name4[this.name4.length] = eval('this.name' + this.pl + '.pop()');
             this.deck4[this.deck4.length] = eval('this.deck' + this.pl + '.pop()');
-            this.deck4[this.deck4.length - 2].disableInteractive();
-            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-            this.remove_shirt(this.pl);
+            //this.deck4[this.deck4.length - 2].disableInteractive();
+            if (eval('this.deck' + this.pl + '.length') > 1) {
+              eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+              this.remove_shirt(this.pl);
+            }
             //! -- konec peremeschenija
           } else {
             this.dragObj.x = this.xstart;
@@ -437,9 +512,11 @@ var WorldScene = new Phaser.Class({
             //!peremeschenie karty mejdu massivami
             this.name5[this.name5.length] = eval('this.name' + this.pl + '.pop()');
             this.deck5[this.deck5.length] = eval('this.deck' + this.pl + '.pop()');
-            this.deck5[this.deck5.length - 2].disableInteractive();
-            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-            this.remove_shirt(this.pl);
+            //this.deck5[this.deck5.length - 2].disableInteractive();
+            if (eval('this.deck' + this.pl + '.length') > 1) {
+              eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+              this.remove_shirt(this.pl);
+            }
             //! -- konec peremeschenija
           } else {
             this.dragObj.x = this.xstart;
@@ -459,9 +536,11 @@ var WorldScene = new Phaser.Class({
             //!peremeschenie karty mejdu massivami
             this.name6[this.name6.length] = eval('this.name' + this.pl + '.pop()');
             this.deck6[this.deck6.length] = eval('this.deck' + this.pl + '.pop()');
-            this.deck6[this.deck6.length - 2].disableInteractive();
-            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-            this.remove_shirt(this.pl);
+            //this.deck6[this.deck6.length - 2].disableInteractive();
+            if (eval('this.deck' + this.pl + '.length') > 1) {
+              eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+              this.remove_shirt(this.pl);
+            }
             //! -- konec peremeschenija
           } else {
             this.dragObj.x = this.xstart;
@@ -481,9 +560,11 @@ var WorldScene = new Phaser.Class({
             //!peremeschenie karty mejdu massivami
             this.name7[this.name7.length] = eval('this.name' + this.pl + '.pop()');
             this.deck7[this.deck7.length] = eval('this.deck' + this.pl + '.pop()');
-            this.deck7[this.deck7.length - 2].disableInteractive();
-            eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
-            this.remove_shirt(this.pl);
+            // this.deck7[this.deck7.length - 2].disableInteractive();
+            if (eval('this.deck' + this.pl + '.length') > 1) {
+              eval('this.deck' + this.pl + '[this.deck' + this.pl + '.length - 1].setInteractive()');
+              this.remove_shirt(this.pl);
+            }
             //! -- konec peremeschenija
           } else {
             this.dragObj.x = this.xstart;
