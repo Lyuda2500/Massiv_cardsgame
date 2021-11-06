@@ -25,6 +25,12 @@ function red_or_black(cart) {
   if (cart.includes('diamond') || cart.includes('hearts')) return 'red';
 }
 
+function weight(name) {
+  let weight = name.substring(name.length - 2);
+  if (weight.includes('_')) weight = name.substring(name.length - 1);
+  return parseInt(weight);
+}
+
 var BootScene = new Phaser.Class({
   Extends: Phaser.Scene,
   initialize: function BootScene() {
@@ -172,6 +178,9 @@ var WorldScene = new Phaser.Class({
     for (let j = 0; j < 7; j++) {
       //perehod po placeholderam
       let u = 0;
+      this.name1[u] = "placeholder";
+      this.deck1[u] = this.add.sprite(xx, yy, 'placeholder', 'placeholder');
+      u++;
       for (let i = 0; i < j + 1; i++) {
         //vykladka kart po placeholderam
         //console.log("crd = " + this.crd[this.crd.length-1]);
@@ -274,6 +283,7 @@ var WorldScene = new Phaser.Class({
     this.dragObj = targets[0];
     this.name_card = 'null';
     this.pl = null;
+    this.w = 0;
     //this.red = null; // false - black, true - red
     if (this.dragObj instanceof Phaser.GameObjects.Sprite) {
       this.input.off('pointerdown', this.startDrag, this);
@@ -289,30 +299,36 @@ var WorldScene = new Phaser.Class({
       if (this.xstart == 100) {
         this.name_card = this.name1[this.name1.length - 1];
         this.pl = 1;
+        this.w = weight(this.name_card);
       }
       if (this.xstart == 260) {
         this.name_card = this.name2[this.name2.length - 1];
         this.pl = 2;
+        this.w = weight(this.name_card);
       }
       if (this.xstart == 420) {
         this.name_card = this.name3[this.name3.length - 1];
         this.pl = 3;
+        this.w = weight(this.name_card);
       }
       if (this.xstart == 580) {
         this.name_card = this.name4[this.name4.length - 1];
-        this.pl = 4;
+        this.w = weight(this.name_card);
       }
       if (this.xstart == 740) {
         this.name_card = this.name5[this.name5.length - 1];
         this.pl = 5;
+        this.w = weight(this.name_card);
       }
       if (this.xstart == 900) {
         this.name_card = this.name6[this.name6.length - 1];
         this.pl = 6;
+        this.w = weight(this.name_card);
       }
       if (this.xstart == 1060) {
         this.name_card = this.name7[this.name7.length - 1];
         this.pl = 7;
+        this.w = weight(this.name_card);
       }
 
       console.log('Name card - ' + this.name_card);
@@ -350,10 +366,7 @@ var WorldScene = new Phaser.Class({
     } else {
       //placeholder-1
       if (pointer.x < 180) {
-        if (
-          red_or_black(this.name1[this.name1.length - 1]) !=
-          red_or_black(this.name_card)
-        ) {
+        if ((red_or_black(this.name1[this.name1.length - 1]) !=  red_or_black(this.name_card)) && this.w+1 == weight(this.name1[this.name1.length - 1]) ) {
           this.dragObj.x = 100;
           this.dragObj.y = 378 + (this.name1.length)*y_shift ;
           //!peremeschenie karty mejdu massivami
@@ -369,10 +382,7 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-2
       if (pointer.x > 179 && pointer.x < 340) {
-        if (
-          red_or_black(this.name2[this.name2.length - 1]) !=
-          red_or_black(this.name_card)
-        ) {
+        if ((red_or_black(this.name2[this.name2.length - 1]) !=  red_or_black(this.name_card)) && this.w+1 == weight(this.name2[this.name2.length - 1])) {
           this.dragObj.x = 260;
           this.dragObj.y = 378 + (this.name2.length)*y_shift ;
           //this.dragObj.y = 378;
@@ -389,10 +399,7 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-3
       if (pointer.x > 339 && pointer.x < 500) {
-        if (
-          red_or_black(this.name3[this.name3.length - 1]) !=
-          red_or_black(this.name_card)
-        ) {
+        if ((red_or_black(this.name3[this.name3.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name3[this.name3.length - 1]) ) {
           this.dragObj.x = 420;
           this.dragObj.y = 378 + (this.name3.length)*y_shift ;
            //!peremeschenie karty mejdu massivami
@@ -408,10 +415,7 @@ var WorldScene = new Phaser.Class({
       }
       //placeholder-4
       if (pointer.x > 499 && pointer.x < 660) {
-        if (
-          red_or_black(this.name4[this.name4.length - 1]) !=
-          red_or_black(this.name_card)
-        ) {
+        if ((red_or_black(this.name4[this.name4.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name4[this.name4.length - 1]) ) {
           this.dragObj.x = 580;
           this.dragObj.y = 378 + (this.name4.length)*y_shift ;
            //!peremeschenie karty mejdu massivami
@@ -428,8 +432,7 @@ var WorldScene = new Phaser.Class({
       //placeholder-5
       if (pointer.x > 659 && pointer.x < 820) {
         if (
-          red_or_black(this.name5[this.name5.length - 1]) !=
-          red_or_black(this.name_card)
+          (red_or_black(this.name5[this.name5.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name5[this.name5.length - 1]) 
         ) {
           this.dragObj.x = 740;
           this.dragObj.y = 378 + (this.name5.length)*y_shift ;
@@ -447,8 +450,7 @@ var WorldScene = new Phaser.Class({
       //placeholder-6
       if (pointer.x > 819 && pointer.x < 980) {
         if (
-          red_or_black(this.name6[this.name6.length - 1]) !=
-          red_or_black(this.name_card)
+          (red_or_black(this.name6[this.name6.length - 1]) != red_or_black(this.name_card))&& this.w+1 == weight(this.name6[this.name6.length - 1]) 
         ) {
           this.dragObj.x = 900;
           this.dragObj.y = 378 + (this.name6.length)*y_shift ;
@@ -466,8 +468,7 @@ var WorldScene = new Phaser.Class({
       //placeholder-7
       if (pointer.x > 979) {
         if (
-          red_or_black(this.name7[this.name7.length - 1]) !=
-          red_or_black(this.name_card)
+          (red_or_black(this.name7[this.name7.length - 1]) != red_or_black(this.name_card)) && this.w+1 == weight(this.name7[this.name7.length - 1]) 
         ) {
           this.dragObj.x = 1060;
           this.dragObj.y = 378 + (this.name7.length)*y_shift ;
