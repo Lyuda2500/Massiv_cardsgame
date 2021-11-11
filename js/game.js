@@ -61,8 +61,11 @@ var WorldScene = new Phaser.Class({
   create: function () {
     // здесь мы создадим сцену мира
     this.crd = []; //massiv nazvanij kart
-    this.deck = []; //
-    this.game_crd = []; //
+
+    //levyj verhnij ugol
+    this.deck0 = []; //massiv kart v perekladke
+    this.name0 = []; //ih imena
+
     this.shirt = []; //rubashka
     this.placehold = []; //placeholdery (cells)
     //sem osnovnyh mest
@@ -94,10 +97,13 @@ var WorldScene = new Phaser.Class({
     this.name10 = [];
     this.name11 = [];
 
-    var x = 100;
-    var y = 150;
+    //section of global variables
+    this.u = 0;
+    this.x = 100;
+    this.y = 150;
     var xx = 100;
     var yy = 378;
+    this.x2 = 260; // pozicia deck
 
     this.coef = 0.8;
     this.width_card = 142;
@@ -142,6 +148,7 @@ var WorldScene = new Phaser.Class({
     //vykladka rubashki
     this.shirt.push(this.add.sprite(100, 150, 'card_shirt', 'card_shirt'));
     this.shirt[0].setDepth(1);
+    this.shirt[0].setInteractive();
 
     //predvaritelnoe napolnenie massiva nazvanij kart
     for (var i = 1; i <= 13; i++) {
@@ -296,6 +303,13 @@ var WorldScene = new Phaser.Class({
           this.w = weight(this.name_card);
         }
       } else {
+        //щелчок по основной колоде (слева вверху)
+        if (pointer.x > 29 && pointer.x < 171) {
+          this.name0[this.u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
+          this.deck0[this.u] = this.add.sprite(this.x2, this.y, 'cards', this.crd.pop()); //! .pop() zabiraet kartu iz kolody
+          this.deck0[this.u].setInteractive();
+          this.u++;
+        }
         if (this.xstart == 580) {
           this.name_card = this.name8[this.name8.length - 1];
           this.pl = 8;
@@ -317,11 +331,11 @@ var WorldScene = new Phaser.Class({
           this.w = weight(this.name_card);
         }
       }
-      console.log('D - ' + eval('this.deck' + this.pl + '.length'));
+      //console.log('D - ' + eval('this.deck' + this.pl + '.length'));
       console.log('Name card - ' + this.name_card);
       console.log('red - ' + red_or_black(this.name_card)); //*/
 
-      this.input.on('pointermove', this.doDrag, this);
+      if (!(pointer.y < 253 && pointer.x > 29 && pointer.x < 171)) this.input.on('pointermove', this.doDrag, this);
       this.input.on('pointerup', this.stopDrag, this);
     }
   },
@@ -347,7 +361,7 @@ var WorldScene = new Phaser.Class({
     this.dragObj.setDepth(0);
 
     if (pointer.y < 300) {
-      // out placeholder 1
+      // ace placeholder 1
       if (pointer.x > 340 && pointer.x < 660) {
         this.dragObj.x = 580;
         this.dragObj.y = 150 + (this.name8.length - 1) * 10;
@@ -360,7 +374,7 @@ var WorldScene = new Phaser.Class({
         }
         //! -- konec peremeschenija
       }
-      // out placeholder 2
+      // ace placeholder 2
       if (pointer.x > 659 && pointer.x < 820) {
         this.dragObj.x = 740;
         this.dragObj.y = 150 + (this.name9.length - 1) * 10;
@@ -373,7 +387,7 @@ var WorldScene = new Phaser.Class({
         }
         //! -- konec peremeschenija
       }
-      // out placeholder 3
+      // ace placeholder 3
       if (pointer.x > 819 && pointer.x < 980) {
         this.dragObj.x = 900;
         this.dragObj.y = 150 + (this.name10.length - 1) * 10;
@@ -386,7 +400,7 @@ var WorldScene = new Phaser.Class({
         }
         //! -- konec peremeschenija
       }
-      // out placeholder 4
+      // ace placeholder 4
       if (pointer.x > 979) {
         this.dragObj.x = 1060;
         this.dragObj.y = 150 + (this.name11.length - 1) * 10;
