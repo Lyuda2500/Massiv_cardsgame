@@ -343,6 +343,13 @@ var WorldScene = new Phaser.Class({
             this.placehold[0].setDepth(0);
           }
         }
+        //nulevoj placeholder
+        if (this.xstart == 260) {
+          this.name_card = this.name0[this.name0.length - 1];
+          this.pl = 0;
+          this.w = weight(this.name_card);
+        }
+        //final placeholders
         if (this.xstart == 580) {
           this.name_card = this.name8[this.name8.length - 1];
           this.pl = 8;
