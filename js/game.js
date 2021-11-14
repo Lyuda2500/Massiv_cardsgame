@@ -62,6 +62,10 @@ var WorldScene = new Phaser.Class({
     // здесь мы создадим сцену мира
     this.crd = []; //massiv nazvanij kart
 
+    //massivy startovoj kolody
+    this.namecrd1 = []; //nazvanija kart
+    this.crd1 = []; //massiv spritov
+
     //levyj verhnij ugol
     this.deck0 = []; //massiv kart v perekladke
     this.name0 = []; //ih imena
@@ -98,7 +102,6 @@ var WorldScene = new Phaser.Class({
     this.name11 = [];
 
     //section of global variables
-    this.u = 0;
     this.x = 100;
     this.y = 150;
     var xx = 100;
@@ -246,6 +249,13 @@ var WorldScene = new Phaser.Class({
       xx += this.width_card + 18; //peremeschenie na sledujuschij placeholder
       yy = 378; //vozvrat pozicii y na placeholder
     }
+    //perenos ostavshyhsia kart v startovuiu kolodu
+    let j = this.crd.length;
+    for (let i = 0; i < j; i++) {
+      this.namecrd1[i] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
+      this.crd1[i] = this.add.sprite(this.x, this.y, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
+      this.crd1[this.crd1.length - 1].setInteractive();
+    }
     this.input.on("pointerdown", this.startDrag, this);
   },
   //! nachinaem dvigat
@@ -305,23 +315,31 @@ var WorldScene = new Phaser.Class({
       } else {
         //щелчок по основной колоде (слева вверху)
         if (pointer.x > 29 && pointer.x < 171) {
-          if (this.crd.length > 0) {
-            if (this.crd.length == 1) {
+          console.log("length-namecrd1 - " + this.namecrd1.length);
+          if (this.namecrd1.length > 0) {
+            //poka v startovoj kolode est karty
+            if (this.namecrd1.length == 1) {
+              console.log("dzin");
               this.shirt[0].setDepth(0);
               this.placehold[0].setDepth(1);
             }
-            this.name0[this.u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-            this.deck0[this.u] = this.add.sprite(this.x2, this.y, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-            this.deck0[this.u].setInteractive();
-            this.u++;
+            this.name0.push(this.namecrd1.pop()); //zapominaem nazvanie kart vyhodiashih iz kolody v igru
+            this.deck0.push(this.crd1.pop()); //! .pop() zabiraet kartu iz kolody
+            if (this.deck0.length > 1) this.deck0[this.deck0.length - 2].setDepth(0);
+            this.deck0[this.deck0.length - 1].setPosition(260, 150);
+            this.deck0[this.deck0.length - 1].setDepth(1);
           } else {
+            //когда заканчивается колода - перекидывает колоду на начало
             let j = this.deck0.length; //сохраняем длину массива, поскольку внутри цикла она будет меняться
             for (let i = 0; i < j; i++) {
-              this.crd[i] = this.name0.pop(); //! .pop() zabiraet kartu iz kolody
-              this.deck0.pop(); // обнуление массива спрайтов
+              this.namecrd1.push(this.name0.pop()); //! .pop() zabiraet kartu iz kolody
+              this.crd1.push(this.deck0.pop()); // обнуление массива спрайтов
+              this.crd1[this.crd1.length - 1].setPosition(100, 150);
+              this.crd1[this.crd1.length - 1].setDepth(0);
+              //console.log("pop - " + this.deck0.length);
               //this.deck0[i].setInteractive();
             }
-            this.shirt[0].setDepth(1);
+            this.shirt[0].setDepth(2);
             this.placehold[0].setDepth(0);
           }
         }
