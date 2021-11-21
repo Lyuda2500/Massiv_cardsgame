@@ -1,13 +1,22 @@
-//var crd = [];
-//var placehold = [];
-//var shirt = [];
-//! Smeschenie po vertikali
-var y_shift = 30;
+//---Section of Global Constant---
+const y1 = 150; //First Line
+const y2 = 378; //Second Line
+const x1 = 100;
+const x2 = 260;
+const x3 = 420;
+const x4 = 580;
+const x5 = 740;
+const x6 = 900;
+const x7 = 1060;
+const y_shift = 30; //! Smeschenie po vertikali
+//---Section of Global Variables---
 
+//---Section of User Functions---
+//uluchshenyj randomaizer
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
-
+//peremeshuvaet kolodu
 function shuffle(arr) {
   for (var i = 0; i < arr.length; i++) {
     var j = getRandomInt(arr.length);
@@ -18,18 +27,39 @@ function shuffle(arr) {
   }
   return arr;
 }
+//proverka cveta masti
 function red_or_black(cart) {
-  //proverka na mast
   if (cart.includes("clubs") || cart.includes("spades")) return "black";
   if (cart.includes("diamond") || cart.includes("hearts")) return "red";
   if (cart.includes("placeholder")) return "placeholder";
 }
-
+//proverka masti
+function take_suit(cart) {
+  if (cart.includes("clubs")) return "clubs";
+  if (cart.includes("spades")) return "spades";
+  if (cart.includes("diamond")) return "diamond";
+  if (cart.includes("hearts")) return "hearts";
+  if (cart.includes("placeholder")) return "placeholder";
+}
+//vozvraschaet ves karty
 function weight(name) {
   let weight = name.substring(name.length - 2);
   if (weight.includes("_")) weight = name.substring(name.length - 1);
   return parseInt(weight);
 }
+//predvaritelnoe napolnenie massiva nazvanij kart
+function cards() {
+  var crd = [];
+  for (let i = 1; i <= 13; i++) {
+    crd.push("clubs_" + i);
+    crd.push("diamond_" + i);
+    crd.push("hearts_" + i);
+    crd.push("spades_" + i);
+  }
+  crd = shuffle(crd);
+  return crd;
+}
+//End functions
 
 var BootScene = new Phaser.Class({
   Extends: Phaser.Scene,
@@ -145,34 +175,13 @@ var WorldScene = new Phaser.Class({
            }*/
 
     //placeholders
-    this.placehold.push(this.add.sprite(100, 150, "placeholder", "placeholder_14"));
+    this.placehold.push(this.add.sprite(x1, y1, "placeholder", "placeholder_14"));
     this.placehold[0].setInteractive();
-    this.placehold.push(this.add.sprite(260, 150, "placeholder", "placeholder_14"));
-    this.placehold.push(this.add.sprite(580, 150, "placeholder", "placeholder_14"));
-    this.placehold.push(this.add.sprite(740, 150, "placeholder", "placeholder_14"));
-    this.placehold.push(this.add.sprite(900, 150, "placeholder", "placeholder_14"));
-    this.placehold.push(this.add.sprite(1060, 150, "placeholder", "placeholder_14")); /*
-    this.placehold.push(
-      this.add.sprite(100, 378, 'placeholder', 'placeholder_14'),
-    );
-    this.placehold.push(
-      this.add.sprite(260, 378, 'placeholder', 'placeholder_14'),
-    );
-    this.placehold.push(
-      this.add.sprite(420, 378, 'placeholder', 'placeholder_14'),
-    );
-    this.placehold.push(
-      this.add.sprite(580, 378, 'placeholder', 'placeholder_14'),
-    );
-    this.placehold.push(
-      this.add.sprite(740, 378, 'placeholder', 'placeholder_14'),
-    );
-    this.placehold.push(
-      this.add.sprite(900, 378, 'placeholder', 'placeholder_14'),
-    );
-    this.placehold.push(
-      this.add.sprite(1060, 378, 'placeholder', 'placeholder_14'),
-    );//*/
+    this.placehold.push(this.add.sprite(x2, y1, "placeholder", "placeholder_14"));
+    this.placehold.push(this.add.sprite(x4, y1, "placeholder", "placeholder_14"));
+    this.placehold.push(this.add.sprite(x5, y1, "placeholder", "placeholder_14"));
+    this.placehold.push(this.add.sprite(x6, y1, "placeholder", "placeholder_14"));
+    this.placehold.push(this.add.sprite(x7, y1, "placeholder", "placeholder_14"));
 
     //vykladka rubashki
     this.shirt.push(this.add.sprite(100, 150, "card_shirt", "card_shirt"));
@@ -180,134 +189,27 @@ var WorldScene = new Phaser.Class({
     this.shirt[0].setInteractive();
 
     //predvaritelnoe napolnenie massiva nazvanij kart
-    for (var i = 1; i <= 13; i++) {
-      this.crd.push("clubs_" + i);
-      this.crd.push("diamond_" + i);
-      this.crd.push("hearts_" + i);
-      this.crd.push("spades_" + i);
-    }
-
-    //peremeshivanie
-    this.crd = shuffle(this.crd);
+    this.crd = cards();
 
     // vykladka po kolonkam
-    let k = 1;
-    for (let j = 0; j < 7; j++) {
-      //perehod po placeholderam
-      let u = 0;
-      let jj = j + 1;
-      eval("this.name" + jj + '[u] = "placeholder_14"');
-      eval("this.deck" + jj + '[u] = this.add.sprite(this.xx, this.yy, "placeholder", "placeholder_14")');
-      u++;
-      for (let i = 0; i < j + 1; i++) {
-        //vykladka kart po placeholderam
-        //console.log("crd = " + this.crd[this.crd.length-1]);
-        if (j == 0) {
-          this.pl1o++;
-          this.name1[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-          this.deck1[u] = this.add.sprite(this.xx, this.yy, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-          this.deck1[u].setInteractive();
-        }
-        if (j == 1) {
-          this.pl2o++;
-          this.name2[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-          this.deck2[u] = this.add.sprite(this.xx, this.yy, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-          if (i == j) this.deck2[u].setInteractive();
-          else {
-            this.pl2o--;
-            this.pl2c++;
-            this.shirt[k] = this.add.sprite(this.xx, this.yy, "card_shirt", "card_shirt"); //vykladka rubashek
-            k = k + 1; //index rubashek
-          }
-          u++;
-        }
-        if (j == 2) {
-          this.pl3o++;
-          this.name3[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-          this.deck3[u] = this.add.sprite(this.xx, this.yy, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-          if (i == j) this.deck3[u].setInteractive();
-          else {
-            this.pl3o--;
-            this.pl3c++;
-            this.shirt[k] = this.add.sprite(this.xx, this.yy, "card_shirt", "card_shirt"); //vykladka rubashek
-            k = k + 1; //index rubashek
-          }
-          u++;
-        }
-        if (j == 3) {
-          this.pl4o++;
-          this.name4[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-          this.deck4[u] = this.add.sprite(this.xx, this.yy, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-          if (i == j) this.deck4[u].setInteractive();
-          else {
-            this.pl4o--;
-            this.pl4c++;
-            this.shirt[k] = this.add.sprite(this.xx, this.yy, "card_shirt", "card_shirt"); //vykladka rubashek
-            k = k + 1; //index rubashek
-          }
-          u++;
-        }
-        if (j == 4) {
-          this.pl5o++;
-          this.name5[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-          this.deck5[u] = this.add.sprite(this.xx, this.yy, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-          if (i == j) this.deck5[u].setInteractive();
-          else {
-            this.pl5o--;
-            this.pl5c++;
-            this.shirt[k] = this.add.sprite(this.xx, this.yy, "card_shirt", "card_shirt"); //vykladka rubashek
-            k = k + 1; //index rubashek
-          }
-          u++;
-        }
-        if (j == 5) {
-          this.pl6o++;
-          this.name6[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-          this.deck6[u] = this.add.sprite(this.xx, this.yy, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-          if (i == j) this.deck6[u].setInteractive();
-          else {
-            this.pl6o--;
-            this.pl6c++;
-            this.shirt[k] = this.add.sprite(this.xx, this.yy, "card_shirt", "card_shirt"); //vykladka rubashek
-            k = k + 1; //index rubashek
-          }
-          u++;
-        }
-        if (j == 6) {
-          this.pl7o++;
-          this.name7[u] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-          this.deck7[u] = this.add.sprite(this.xx, this.yy, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-          if (i == j) this.deck7[u].setInteractive();
-          else {
-            this.pl7o--;
-            this.pl7c++;
-            this.shirt[k] = this.add.sprite(this.xx, this.yy, "card_shirt", "card_shirt"); //vykladka rubashek
-            k = k + 1; //index rubashek
-          }
-          u++;
-        }
+    this.first_load();
+    //Konec vykladki po kolodam
 
-        this.yy += y_shift; //smeshchenie po y
-        //console.log("deck = " + this.deck[k]);
-      }
-      this.xx += this.width_card + 18; //peremeschenie na sledujuschij placeholder
-      this.yy = 378; //vozvrat pozicii y na placeholder
-    }
     //perenos ostavshyhsia kart v startovuiu kolodu
-    let j = this.crd.length;
-    for (let i = 0; i < j; i++) {
-      this.namecrd1[i] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-      this.crd1[i] = this.add.sprite(this.x, this.y, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
-      this.crd1[this.crd1.length - 1].setInteractive();
-    }
+    // let j = this.crd.length;
+    // for (let i = 0; i < j; i++) {
+    //   this.namecrd1[i] = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
+    //   this.crd1[i] = this.add.sprite(this.x, this.y, "cards", this.crd.pop()); //! .pop() zabiraet kartu iz kolody
+    //   this.crd1[this.crd1.length - 1].setInteractive();
+    // }
     this.input.on("pointerdown", this.startDrag, this);
   }, //End of create:
   //! nachinaem dvigat
   startDrag(pointer, targets) {
     this.dragObj = targets[0];
-    this.name_card = "null";
-    this.pl = null;
-    this.w = 0;
+    //this.name_card = "null";
+    //this.pl = null;
+    //this.w = 0;
 
     if (this.dragObj instanceof Phaser.GameObjects.Sprite) {
       this.input.off("pointerdown", this.startDrag, this);
@@ -315,163 +217,16 @@ var WorldScene = new Phaser.Class({
       //this.scene.bringToTop(this.dragObj);
       //game.scene.bringToTop(this.dragObj);
 
-      this.xstart = this.dragObj.x;
-      this.ystart = this.dragObj.y;
+      //todo this.xstart = this.dragObj.x;
+      //todo this.ystart = this.dragObj.y;
 
-      //nizhnie placeholdery
-      if (this.ystart > 300) {
-        //placeholder 1
-        if (this.xstart == 100) {
-          //podnimaet kartu nad ostalnymi esli ona posledniaja
-          this.pos = 1 + (this.ystart - this.yy) / y_shift;
-          if (this.pl1o == this.pos) this.dragObj.setDepth(2);
-          console.log(this.pos);
-          this.upcard = this.pl1o - this.pos;
-          console.log(this.pl1o + " " + 0);
-          this.name_card = this.name1[this.pos];
-          this.pl = 1;
-          this.w = weight(this.name_card);
-        }
-        //placeholder 2
-        if (this.xstart == 260) {
-          //podnimaet kartu nad ostalnymi esli ona posledniaja
-          this.pos = 1 + (this.ystart - this.yy) / y_shift;
-          if (this.pl2o + this.pl2c == this.pos) this.dragObj.setDepth(2);
-          console.log(this.pos);
-          this.upcard = this.pl2o + this.pl2c - this.pos;
-          console.log(this.pl2o + " " + this.pl2c);
-          this.name_card = this.name2[this.pos];
-          this.pl = 2;
-          this.w = weight(this.name_card);
-        }
-        //placeholder 3
-        if (this.xstart == 420) {
-          //podnimaet kartu nad ostalnymi esli ona posledniaja
-          this.pos = 1 + (this.ystart - this.yy) / y_shift;
-          if (this.pl3o + this.pl3c == this.pos) this.dragObj.setDepth(2);
-          console.log(this.pos);
-          this.upcard = this.pl3o + this.pl3c - this.pos;
-          console.log(this.pl3o + " " + this.pl3c);
-          this.name_card = this.name3[this.pos];
-          this.pl = 3;
-          this.w = weight(this.name_card);
-        }
-        //placeholder 4
-        if (this.xstart == 580) {
-          //podnimaet kartu nad ostalnymi esli ona posledniaja
-          this.pos = 1 + (this.ystart - this.yy) / y_shift;
-          if (this.pl4o + this.pl4c == this.pos) this.dragObj.setDepth(2);
-          console.log(this.pos);
-          this.upcard = this.pl4o + this.pl4c - this.pos;
-          console.log(this.pl4o + " " + this.pl4c);
-          this.name_card = this.name4[this.pos];
-          this.pl = 4;
-          this.w = weight(this.name_card);
-        }
-        //placeholder 5
-        if (this.xstart == 740) {
-          //podnimaet kartu nad ostalnymi esli ona posledniaja
-          this.pos = 1 + (this.ystart - this.yy) / y_shift;
-          if (this.pl5o + this.pl5c == this.pos) this.dragObj.setDepth(2);
-          console.log(this.pos);
-          this.upcard = this.pl5o + this.pl5c - this.pos;
-          console.log(this.pl5o + " " + this.pl5c);
-          this.name_card = this.name5[this.pos];
-          this.pl = 5;
-          this.w = weight(this.name_card);
-        }
-        //placeholder 6
-        if (this.xstart == 900) {
-          //podnimaet kartu nad ostalnymi esli ona posledniaja
-          this.pos = 1 + (this.ystart - this.yy) / y_shift;
-          if (this.pl6o + this.pl6c == this.pos) this.dragObj.setDepth(2);
-          console.log(this.pos);
-          this.upcard = this.pl6o + this.pl6c - this.pos;
-          console.log(this.pl6o + " " + this.pl6c);
-          this.name_card = this.name6[this.pos];
-          this.pl = 6;
-          this.w = weight(this.name_card);
-        }
-        //placeholder 7
-        if (this.xstart == 1060) {
-          //podnimaet kartu nad ostalnymi esli ona posledniaja
-          this.pos = 1 + (this.ystart - this.yy) / y_shift;
-          if (this.pl7o + this.pl7c == this.pos) this.dragObj.setDepth(2);
-          console.log(this.pos);
-          this.upcard = this.pl7o + this.pl7c - this.pos;
-          console.log(this.pl7o + " " + this.pl7c);
-          this.name_card = this.name7[this.pos];
-          this.pl = 7;
-          this.w = weight(this.name_card);
-        }
-        //verhnie placeholdery
-      } else {
-        //щелчок по основной колоде (слева вверху)
-        if (pointer.x > 29 && pointer.x < 171) {
-          console.log("length-namecrd1 - " + this.namecrd1.length);
-          if (this.namecrd1.length > 0) {
-            //poka v startovoj kolode est karty
-            if (this.namecrd1.length == 1) {
-              console.log("dzin");
-              this.shirt[0].setDepth(0);
-              this.placehold[0].setDepth(1);
-            }
-            this.name0.push(this.namecrd1.pop()); //zapominaem nazvanie kart vyhodiashih iz kolody v igru
-            this.deck0.push(this.crd1.pop()); //! .pop() zabiraet kartu iz kolody
-            if (this.deck0.length > 1) this.deck0[this.deck0.length - 2].setDepth(0);
-            this.deck0[this.deck0.length - 1].setPosition(260, 150);
-            this.deck0[this.deck0.length - 1].setDepth(1);
-          } else {
-            //когда заканчивается колода - перекидывает колоду на начало
-            let j = this.deck0.length; //сохраняем длину массива, поскольку внутри цикла она будет меняться
-            for (let i = 0; i < j; i++) {
-              this.namecrd1.push(this.name0.pop()); //! .pop() zabiraet kartu iz kolody
-              this.crd1.push(this.deck0.pop()); // обнуление массива спрайтов
-              this.crd1[this.crd1.length - 1].setPosition(100, 150);
-              this.crd1[this.crd1.length - 1].setDepth(0);
-              //console.log("pop - " + this.deck0.length);
-              //this.deck0[i].setInteractive();
-            }
-            this.shirt[0].setDepth(2);
-            this.placehold[0].setDepth(0);
-          }
-        }
-        //nulevoj placeholder
-        if (this.xstart == 260) {
-          this.name_card = this.name0[this.name0.length - 1];
-          this.pl = 0;
-          this.w = weight(this.name_card);
-        }
-        //final placeholders
-        if (this.xstart == 580) {
-          //podnimaet kartu nad ostalnymi eski ona posledniaja
-          if (this.pl8o == 1 + (this.ystart - this.y) / (y_shift / 2)) this.dragObj.setDepth(2);
-          this.name_card = this.name8[this.name8.length - 1];
-          this.pl = 8;
-          this.w = weight(this.name_card);
-        }
-        if (this.xstart == 740) {
-          //podnimaet kartu nad ostalnymi eski ona posledniaja
-          if (this.pl9o == 1 + (this.ystart - this.y) / (y_shift / 2)) this.dragObj.setDepth(2);
-          this.name_card = this.name9[this.name9.length - 1];
-          this.pl = 9;
-          this.w = weight(this.name_card);
-        }
-        if (this.xstart == 900) {
-          //podnimaet kartu nad ostalnymi eski ona posledniaja
-          if (this.pl10o == 1 + (this.ystart - this.y) / (y_shift / 2)) this.dragObj.setDepth(2);
-          this.name_card = this.name10[this.name10.length - 1];
-          this.pl = 10;
-          this.w = weight(this.name_card);
-        }
-        if (this.xstart == 1060) {
-          //podnimaet kartu nad ostalnymi eski ona posledniaja
-          if (this.pl11o == 1 + (this.ystart - this.y) / (y_shift / 2)) this.dragObj.setDepth(2);
-          this.name_card = this.name11[this.name11.length - 1];
-          this.pl = 11;
-          this.w = weight(this.name_card);
-        }
-      }
+      //podnimaet kartu nad ostalnymi esli ona posledniaja
+      //this.dragObj.setDepth(2);
+      console.log("pos1 - " + this.dragObj.pos);
+      eval("console.log('pos2 - ' + this.deck" + this.dragObj.pl + ".length)");
+      eval("console.log('plc - ' + this.deck" + this.dragObj.pl + "[0].plc)");
+      if (eval("this.dragObj.pos  == this.deck" + this.dragObj.pl + ".length - 1")) this.dragObj.setDepth(2);
+
       //console.log('D - ' + eval('this.deck' + this.pl + '.length'));
       //console.log('Name card - ' + this.name_card);
       //console.log('red - ' + red_or_black(this.name_card)); //*/
@@ -485,24 +240,16 @@ var WorldScene = new Phaser.Class({
     this.dragObj.x = pointer.x;
     this.dragObj.y = pointer.y;
 
-    //kod nizhe tianet pachku
-    if (this.upcard > 0) {
-      // esli zahvatil bolshe odnoj karty
-      for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
-        eval("this.deck" + this.pl + "[this.pos + i].x = pointer.x");
-        eval("this.deck" + this.pl + "[this.pos + i].y = pointer.y + y_shift*i");
-      }
-    }
+    // //kod nizhe tianet pachku
+    // if (this.upcard > 0) {
+    //   // esli zahvatil bolshe odnoj karty
+    //   for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
+    //     eval("this.deck" + this.pl + "[this.pos + i].x = pointer.x");
+    //     eval("this.deck" + this.pl + "[this.pos + i].y = pointer.y + y_shift*i");
+    //   }
+    // }
   },
-  /*
-    100 180
-    260 340
-    420 500
-    580 660
-    740 820
-    900 980
-    1060
-    */
+
   stopDrag(pointer) {
     // function, kotoraja vypolnyaetcya, kogda otpuskaesh knopku myshy pri peretaskivanii
     this.input.on("pointerdown", this.startDrag, this);
@@ -511,180 +258,182 @@ var WorldScene = new Phaser.Class({
     this.dragObj.setDepth(0);
 
     if (pointer.y < 300) {
-      //verhnie placeholdery
-      // ace placeholder 1
-      if (pointer.x > 340 && pointer.x < 660) {
-        this.pl8o++;
-        this.dragObj.x = 100;
-        this.dragObj.x = 580;
-        this.dragObj.y = 150 + (this.name8.length - 1) * (y_shift / 2);
-        //!peremeschenie karty mejdu massivami
-        this.name8[this.name8.length] = eval("this.name" + this.pl + ".pop()");
-        this.deck8[this.deck8.length] = eval("this.deck" + this.pl + ".pop()");
-        if (eval("this.pl" + this.pl + "o == 1")) {
-          if (eval("this.pl" + this.pl + "c > 0")) {
-            eval("this.pl" + this.pl + "c--");
-            eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
-            this.remove_shirt(this.pl);
-          }
-        } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
-        else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
-        //! -- konec peremeschenija
-      }
-      // ace placeholder 2
-      if (pointer.x > 659 && pointer.x < 820) {
-        this.pl9o++;
-        this.dragObj.x = 740;
-        this.dragObj.y = 150 + (this.name9.length - 1) * (y_shift / 2);
-        //!peremeschenie karty mejdu massivami
-        this.name9[this.name9.length] = eval("this.name" + this.pl + ".pop()");
-        this.deck9[this.deck9.length] = eval("this.deck" + this.pl + ".pop()");
-        //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
-        if (eval("this.pl" + this.pl + "o == 1")) {
-          if (eval("this.pl" + this.pl + "c > 0")) {
-            eval("this.pl" + this.pl + "c--");
-            eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
-            this.remove_shirt(this.pl);
-          }
-        } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
-        else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
-        //! -- konec peremeschenija
-      }
-      // ace placeholder 3
-      if (pointer.x > 819 && pointer.x < 980) {
-        this.pl10o++;
-        this.dragObj.x = 900;
-        this.dragObj.y = 150 + (this.name10.length - 1) * (y_shift / 2);
-        //!peremeschenie karty mejdu massivami
-        this.name10[this.name10.length] = eval("this.name" + this.pl + ".pop()");
-        this.deck10[this.deck10.length] = eval("this.deck" + this.pl + ".pop()");
-        //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
-        if (eval("this.pl" + this.pl + "o == 1")) {
-          if (eval("this.pl" + this.pl + "c > 0")) {
-            eval("this.pl" + this.pl + "c--");
-            eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
-            this.remove_shirt(this.pl);
-          }
-        } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
-        else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
-        //! -- konec peremeschenija
-      }
-      // ace placeholder 4
-      if (pointer.x > 979) {
-        this.pl11o++;
-        this.dragObj.x = 1060;
-        this.dragObj.y = 150 + (this.name11.length - 1) * (y_shift / 2);
-        //!peremeschenie karty mejdu massivami
-        this.name11[this.name11.length] = eval("this.name" + this.pl + ".pop()");
-        this.deck11[this.deck11.length] = eval("this.deck" + this.pl + ".pop()");
-        //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
-        if (eval("this.pl" + this.pl + "o == 1")) {
-          if (eval("this.pl" + this.pl + "c > 0")) {
-            eval("this.pl" + this.pl + "c--");
-            eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
-            this.remove_shirt(this.pl);
-          }
-        } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
-        else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
-        //! -- konec peremeschenija
-      }
+      //   //verhnie placeholdery
+      //   // ace placeholder 1
+      //   if (pointer.x > 340 && pointer.x < 660) {
+      //     //this.pl8o++;
+      //     this.dragObj.x = 580;
+      //     this.dragObj.y = 150 + (this.name8.length - 1) * (y_shift / 2);
+      //     //!peremeschenie karty mejdu massivami
+      //     this.name8[this.name8.length] = eval("this.name" + this.pl + ".pop()");
+      //     this.deck8[this.deck8.length] = eval("this.deck" + this.pl + ".pop()");
+      //     if (eval("this.pl" + this.pl + "o == 1")) {
+      //       if (eval("this.pl" + this.pl + "c > 0")) {
+      //         eval("this.pl" + this.pl + "c--");
+      //         eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
+      //         this.remove_shirt(this.pl);
+      //       }
+      //     } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
+      //     else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
+      //     //! -- konec peremeschenija
+      //   }
+      //   // ace placeholder 2
+      //   if (pointer.x > 659 && pointer.x < 820) {
+      //     this.pl9o++;
+      //     this.dragObj.x = 740;
+      //     this.dragObj.y = 150 + (this.name9.length - 1) * (y_shift / 2);
+      //     //!peremeschenie karty mejdu massivami
+      //     this.name9[this.name9.length] = eval("this.name" + this.pl + ".pop()");
+      //     this.deck9[this.deck9.length] = eval("this.deck" + this.pl + ".pop()");
+      //     //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
+      //     if (eval("this.pl" + this.pl + "o == 1")) {
+      //       if (eval("this.pl" + this.pl + "c > 0")) {
+      //         eval("this.pl" + this.pl + "c--");
+      //         eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
+      //         this.remove_shirt(this.pl);
+      //       }
+      //     } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
+      //     else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
+      //     //! -- konec peremeschenija
+      //   }
+      //   // ace placeholder 3
+      //   if (pointer.x > 819 && pointer.x < 980) {
+      //     this.pl10o++;
+      //     this.dragObj.x = 900;
+      //     this.dragObj.y = 150 + (this.name10.length - 1) * (y_shift / 2);
+      //     //!peremeschenie karty mejdu massivami
+      //     this.name10[this.name10.length] = eval("this.name" + this.pl + ".pop()");
+      //     this.deck10[this.deck10.length] = eval("this.deck" + this.pl + ".pop()");
+      //     //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
+      //     if (eval("this.pl" + this.pl + "o == 1")) {
+      //       if (eval("this.pl" + this.pl + "c > 0")) {
+      //         eval("this.pl" + this.pl + "c--");
+      //         eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
+      //         this.remove_shirt(this.pl);
+      //       }
+      //     } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
+      //     else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
+      //     //! -- konec peremeschenija
+      //   }
+      //   // ace placeholder 4
+      //   if (pointer.x > 979) {
+      //     this.pl11o++;
+      //     this.dragObj.x = 1060;
+      //     this.dragObj.y = 150 + (this.name11.length - 1) * (y_shift / 2);
+      //     //!peremeschenie karty mejdu massivami
+      //     this.name11[this.name11.length] = eval("this.name" + this.pl + ".pop()");
+      //     this.deck11[this.deck11.length] = eval("this.deck" + this.pl + ".pop()");
+      //     //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
+      //     if (eval("this.pl" + this.pl + "o == 1")) {
+      //       if (eval("this.pl" + this.pl + "c > 0")) {
+      //         eval("this.pl" + this.pl + "c--");
+      //         eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
+      //         this.remove_shirt(this.pl);
+      //       }
+      //     } //minusuet peremennuju otkrytyh kart v ishodnom placeholdere
+      //     else if (eval("this.pl" + this.pl + "o >1")) eval("this.pl" + this.pl + "o--");
+      //     //! -- konec peremeschenija
+      //}
       //else
-      if (pointer.x < 340) {
-        this.dragObj.x = this.xstart;
-        this.dragObj.y = this.ystart;
-      }
+      // if (pointer.x < 340) {
+      //   this.dragObj.x = this.xstart;
+      //   this.dragObj.y = this.ystart;
+      // }
     } //nizhnie placeholdery
     else {
       //placeholder-1
       if (pointer.x < 180) {
-        this.peremeschenie(1, 100);
+        this.peremeschenie(1, x1);
       }
       //placeholder-2
       if (pointer.x > 179 && pointer.x < 340) {
-        this.peremeschenie(2, 260);
+        this.peremeschenie(2, x2);
       }
       //placeholder-3
       if (pointer.x > 339 && pointer.x < 500) {
-        this.peremeschenie(3, 420);
+        this.peremeschenie(3, x3);
       }
       //placeholder-4
       if (pointer.x > 499 && pointer.x < 660) {
-        this.peremeschenie(4, 580);
+        this.peremeschenie(4, x4);
       }
       //placeholder-5
       if (pointer.x > 659 && pointer.x < 820) {
-        this.peremeschenie(5, 740);
+        this.peremeschenie(5, x5);
       }
       //placeholder-6
       if (pointer.x > 819 && pointer.x < 980) {
-        this.peremeschenie(6, 900);
+        this.peremeschenie(6, x6);
       }
       //placeholder-7
       if (pointer.x > 979) {
-        this.peremeschenie(7, 1060);
+        this.peremeschenie(7, x7);
       }
     }
   },
   peremeschenie(ph, xx) {
-    if (red_or_black(eval("this.name" + ph + "[this.name" + ph + ".length - 1]")) != red_or_black(this.name_card) || red_or_black(eval("this.name" + ph + "[this.name" + ph + ".length - 1]")) == "placeholder") {
-      if (this.w + 1 == weight(eval("this.name" + ph + "[this.name" + ph + ".length - 1]"))) {
-        eval("this.pl" + ph + "o++");
+    var obj;
+    eval("obj = this.deck" + ph + "[this.deck" + ph + ".length - 1]");
+    if (obj.color != this.dragObj.color || obj.name == "placeholder_14") {
+      //esli ves menshe na 1
+      if (obj.weight == this.dragObj.weight + 1) {
+        eval("this.deck" + ph + "[0].plo++");
         this.dragObj.x = xx;
-        this.dragObj.y = this.yy + eval("this.name" + ph + ".length - 1") * y_shift;
-        //kod nizhe tianet pachku
-        if (this.upcard > 0) {
-          // esli zahvatil bolshe odnoj karty
-          for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
-            eval("this.pl" + ph + "o++");
-            eval("this.deck" + this.pl + "[this.pos + i].x = xx");
-            eval("this.deck" + this.pl + "[this.pos + i].y = this.yy + ((this.name1.length - 1) * y_shift) + y_shift*i");
-          }
-        }
+        this.dragObj.y = y2 + eval("this.deck" + ph + ".length - 1") * y_shift;
+        // //kod nizhe tianet pachku
+        // if (this.upcard > 0) {
+        //   // esli zahvatil bolshe odnoj karty
+        //   for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
+        //     eval("this.pl" + ph + "o++");
+        //     eval("this.deck" + this.pl + "[this.pos + i].x = xx");
+        //     eval("this.deck" + this.pl + "[this.pos + i].y = this.yy + ((this.name1.length - 1) * y_shift) + y_shift*i");
+        //   }
+        // }
         //!peremeschenie karty mejdu massivami
-        if (this.upcard > 0) {
-          // esli zahvatil bolshe odnoj karty
-          let dlin = eval("this.name" + ph + ".length");
-          for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
-            eval("this.name" + ph + "[dlin + this.upcard + 1 - i] = this.name" + this.pl + ".pop()");
-            eval("this.deck" + ph + "[dlin + this.upcard + 1 - i] = this.deck" + this.pl + ".pop()");
-            eval("this.pl" + this.pl + "o--"); //minusuem schetchik otkrytyj kart
-          }
-        } else {
-          eval("this.name" + ph + "[this.name" + ph + ".length] = this.name" + this.pl + ".pop()");
-          eval("this.deck" + ph + "[this.deck" + ph + ".length] = this.deck" + this.pl + ".pop()");
-          eval("this.pl" + this.pl + "o--"); //minusuem schetchik otkrytyj kart
-        }
+        // if (this.upcard > 0) {
+        //   // esli zahvatil bolshe odnoj karty
+        //   let dlin = eval("this.name" + ph + ".length");
+        //   for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
+        //     eval("this.name" + ph + "[dlin + this.upcard + 1 - i] = this.name" + this.pl + ".pop()");
+        //     eval("this.deck" + ph + "[dlin + this.upcard + 1 - i] = this.deck" + this.pl + ".pop()");
+        //     eval("this.pl" + this.pl + "o--"); //minusuem schetchik otkrytyj kart
+        //   }
+        // } else {
+
+        eval("this.deck" + ph + ".push(this.deck" + this.dragObj.pl + ".pop())");
+        eval("this.deck" + this.dragObj.pl + "[0].plo--"); //minusuem schetchik otkrytyj kart
+        //}
         //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
-        if (eval("this.pl" + this.pl + "c > 0")) {
-          if (eval("this.pl" + this.pl + "o + 1 - this.upcard == 1")) {
-            eval("this.pl" + this.pl + "o++"); //vozvrashaem nazad schetchik, potomu chto otkryli rubashku
-            eval("this.pl" + this.pl + "c--");
-            eval("this.deck" + this.pl + "[this.deck" + this.pl + ".length - 1].setInteractive()");
-            this.remove_shirt(this.pl);
-          }
+        if (eval("this.deck" + this.dragObj.pl + "[0].plc > 0")) {
+          // if (eval("this.pl" + this.pl + "o + 1 - this.upcard == 1")) {
+          eval("this.deck" + this.dragObj.pl + "[0].plo++"); //vozvrashaem nazad schetchik, potomu chto otkryli rubashku
+          eval("this.deck" + this.dragObj.pl + "[0].plcc--");
+          eval("this.deck" + this.dragObj.pl + "[this.deck" + this.dragObj.pl + ".length - 1].setInteractive()");
+          this.remove_shirt(this.dragObj.pl);
+          //}
         }
         //! -- konec peremeschenija
       } else {
-        this.dragObj.x = this.xstart;
-        this.dragObj.y = this.ystart;
-        //kod nizhe tianet pachku
-        if (this.upcard > 0) {
-          for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
-            eval("this.deck" + this.pl + "[this.pos + i].x = this.xstart");
-            eval("this.deck" + this.pl + "[this.pos + i].y = this.ystart + y_shift*i");
-          }
-        }
+        this.dragObj.x = this.dragObj.sx;
+        this.dragObj.y = this.dragObj.sy;
+        // //kod nizhe tianet pachku
+        // if (this.upcard > 0) {
+        //   for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
+        //     eval("this.deck" + this.pl + "[this.pos + i].x = this.xstart");
+        //     eval("this.deck" + this.pl + "[this.pos + i].y = this.ystart + y_shift*i");
+        //   }
+        // }
       }
     } else {
-      this.dragObj.x = this.xstart;
-      this.dragObj.y = this.ystart;
-      // kod nizhe tianet pachku
-      if (this.upcard > 0) {
-        for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
-          eval("this.deck" + this.pl + "[this.pos + i].x = this.xstart");
-          eval("this.deck" + this.pl + "[this.pos + i].y = this.ystart + y_shift*i");
-        }
-      }
+      this.dragObj.x = this.dragObj.sx;
+      this.dragObj.y = this.dragObj.sy;
+      // // kod nizhe tianet pachku
+      // if (this.upcard > 0) {
+      //   for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
+      //     eval("this.deck" + this.pl + "[this.pos + i].x = this.xstart");
+      //     eval("this.deck" + this.pl + "[this.pos + i].y = this.ystart + y_shift*i");
+      //   }
+      // }
     }
   },
   remove_shirt(pos) {
@@ -694,38 +443,75 @@ var WorldScene = new Phaser.Class({
     }
     //placeholder - 3
     if (pos == 3) {
-      if (eval("this.deck" + this.pl + ".length") == 3) this.shirt[3].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 2) this.shirt[2].visible = false;
+      if (eval("this.deck" + pos + ".length == 3")) this.shirt[3].visible = false;
+      if (eval("this.deck" + pos + ".length == 2")) this.shirt[2].visible = false;
     }
     //placeholder - 4
     if (pos == 4) {
-      if (eval("this.deck" + this.pl + ".length") == 4) this.shirt[6].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 3) this.shirt[5].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 2) this.shirt[4].visible = false;
+      if (eval("this.deck" + pos + ".length == 4")) this.shirt[6].visible = false;
+      if (eval("this.deck" + pos + ".length == 3")) this.shirt[5].visible = false;
+      if (eval("this.deck" + pos + ".length == 2")) this.shirt[4].visible = false;
     }
     //placeholder - 5
     if (pos == 5) {
-      if (eval("this.deck" + this.pl + ".length") == 5) this.shirt[10].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 4) this.shirt[9].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 3) this.shirt[8].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 2) this.shirt[7].visible = false;
+      if (eval("this.deck" + pos + ".length == 5")) this.shirt[10].visible = false;
+      if (eval("this.deck" + pos + ".length == 4")) this.shirt[9].visible = false;
+      if (eval("this.deck" + pos + ".length == 3")) this.shirt[8].visible = false;
+      if (eval("this.deck" + pos + ".length == 2")) this.shirt[7].visible = false;
     }
     //placeholder - 6
     if (pos == 6) {
-      if (eval("this.deck" + this.pl + ".length") == 6) this.shirt[15].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 5) this.shirt[14].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 4) this.shirt[13].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 3) this.shirt[12].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 2) this.shirt[11].visible = false;
+      if (eval("this.deck" + pos + ".length == 6")) this.shirt[15].visible = false;
+      if (eval("this.deck" + pos + ".length == 5")) this.shirt[14].visible = false;
+      if (eval("this.deck" + pos + ".length == 4")) this.shirt[13].visible = false;
+      if (eval("this.deck" + pos + ".length == 3")) this.shirt[12].visible = false;
+      if (eval("this.deck" + pos + ".length == 2")) this.shirt[11].visible = false;
     }
     //placeholder - 7
     if (pos == 7) {
-      if (eval("this.deck" + this.pl + ".length") == 7) this.shirt[21].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 6) this.shirt[20].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 5) this.shirt[19].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 4) this.shirt[18].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 3) this.shirt[17].visible = false;
-      if (eval("this.deck" + this.pl + ".length") == 2) this.shirt[16].visible = false;
+      if (eval("this.deck" + pos + ".length == 7")) this.shirt[21].visible = false;
+      if (eval("this.deck" + pos + ".length == 6")) this.shirt[20].visible = false;
+      if (eval("this.deck" + pos + ".length == 5")) this.shirt[19].visible = false;
+      if (eval("this.deck" + pos + ".length == 4")) this.shirt[18].visible = false;
+      if (eval("this.deck" + pos + ".length == 3")) this.shirt[17].visible = false;
+      if (eval("this.deck" + pos + ".length == 2")) this.shirt[16].visible = false;
+    }
+  },
+  first_load() {
+    var k = 1;
+    var posx = x1;
+    var posy = y2;
+    var j;
+    var name;
+    for (let i = 1; i <= 7; i++) {
+      posy = y2;
+      j = 1;
+      eval("this.deck" + i + "[0] = this.add.sprite(posx, posy, 'placeholder', 'placeholder_14')");
+      eval("this.deck" + i + "[0].plo = 0");
+      eval("this.deck" + i + "[0].plc = 0");
+      do {
+        eval("this.deck" + i + "[0].plo +=1");
+        name = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
+        eval("this.deck" + i + "[j] = this.add.sprite(posx, posy, 'cards', this.crd.pop())"); //! .pop() zabiraet kartu iz kolody
+        eval("this.deck" + i + "[j].name = name"); //imia karty
+        eval("this.deck" + i + "[j].color = red_or_black(name)");
+        eval("this.deck" + i + "[j].suit = take_suit(name)");
+        eval("this.deck" + i + "[j].weight = weight(name)");
+        eval("this.deck" + i + "[j].pl = i");
+        eval("this.deck" + i + "[j].sx = posx");
+        eval("this.deck" + i + "[j].sy = posy");
+        eval("this.deck" + i + "[j].pos = j");
+        if (i == j) eval("this.deck" + i + "[j].setInteractive()");
+        else {
+          eval("this.deck" + i + "[0].plo -= 1");
+          eval("this.deck" + i + "[0].plc += 1");
+          this.shirt[k] = this.add.sprite(posx, posy, "card_shirt", "card_shirt"); //vykladka rubashek
+          k++; //index rubashek
+        }
+        j++;
+        posy = posy + y_shift;
+      } while (j < i + 1);
+      posx = posx + 160;
     }
   },
 });
