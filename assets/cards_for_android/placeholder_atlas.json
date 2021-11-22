@@ -1,10 +1,10 @@
 {
     "frames": [
         {
-            "filename": "placeholder",
+            "filename": "placeholder_16",
             "frame": {
                 "w": 96,
-                "h": 139,
+                "h": 141,
                 "x": 0,
                 "y": 0
             },
@@ -14,12 +14,25 @@
             }
         },
         {
-            "filename": "placeholder2",
+            "filename": "placeholder_15",
+            "frame": {
+                "w": 96,
+                "h": 141,
+                "x": 96,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "placeholder_14",
             "frame": {
                 "w": 96,
                 "h": 139,
-                "x": 96,
-                "y": 0
+                "x": 0,
+                "y": 141
             },
             "anchor": {
                 "x": 0.5,
