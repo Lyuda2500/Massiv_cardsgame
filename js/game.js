@@ -9,6 +9,8 @@ const x5 = 740;
 const x6 = 900;
 const x7 = 1060;
 const y_shift = 30; //! Smeschenie po vertikali
+const card_width = 142;
+const card_heigth = 206;
 //---Section of Global Variables---
 
 //---Section of User Functions---
@@ -172,12 +174,13 @@ var WorldScene = new Phaser.Class({
             this.deck0[this.deck0.length - 1].setInteractive();
           }
         }
+        //конец секции обработки стартовых плейсхолдеров (левый верхний угол)
       } else {
         //Иначе, - Если взаимодействуем с остальными картами
 
-        console.log("Klick - name: " + this.dragObj.name);
-        console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
-        console.log("Klick - pos" + this.dragObj.pos);
+        // console.log("Klick - name: " + this.dragObj.name);
+        // console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
+        // console.log("Klick - pos" + this.dragObj.pos);
         //!----------------------------------
         // var o;
         // eval("o = this.deck" + this.dragObj.pl + ".length - 1");
@@ -186,7 +189,8 @@ var WorldScene = new Phaser.Class({
         // }
         //!----------------------------------
 
-        this.upcard = eval("this.deck" + this.dragObj.pl + ".length-1") - this.dragObj.pos; //определяем количество карт сверху
+        //определяем количество карт сверху
+        this.upcard = eval("this.deck" + this.dragObj.pl + ".length-1") - this.dragObj.pos;
 
         //поднимает карту над остальными если она последняя
         if (this.upcard == 0) {
@@ -199,7 +203,7 @@ var WorldScene = new Phaser.Class({
           }
         }
 
-        this.input.on("pointermove", this.doDrag, this); //включение движения //TODO-----------------------------------------------------
+        this.input.on("pointermove", this.doDrag, this); //включение движения
       }
       this.input.on("pointerup", this.stopDrag, this);
     }
@@ -208,7 +212,7 @@ var WorldScene = new Phaser.Class({
   doDrag(pointer) {
     this.dragObj.x = pointer.x;
     this.dragObj.y = pointer.y;
-    console.log("DODRAG - " + this.dragObj.name);
+
     //код ниже тянет пачку
     //если захватил больше одной карты
     if (this.upcard > 0) {
@@ -226,53 +230,55 @@ var WorldScene = new Phaser.Class({
     this.input.off("pointerup", this.stopDrag, this);
     this.dragObj.setDepth(0);
 
-    if (pointer.y < 300) {
+    if (this.dragObj.y < y1 + card_heigth / 2) {
       //верхние плейсхолдеры
 
       // ace placeholder 1
-      if (pointer.x > 499 && pointer.x < 660) {
+      this.dragObj.x > 499 && this.dragObj.x < 660;
+
+      if (this.dragObj.x > 499 && this.dragObj.x < 660) {
         this.finalmove(8, x4);
       }
       //ace placeholder 2
-      if (pointer.x > 659 && pointer.x < 820) {
+      if (this.dragObj.x > 659 && this.dragObj.x < 820) {
         this.finalmove(9, x5);
       }
       //ace placeholder 3
-      if (pointer.x > 819 && pointer.x < 980) {
+      if (this.dragObj.x > 819 && this.dragObj.x < 980) {
         this.finalmove(10, x6);
       }
       //ace placeholder 4
-      if (pointer.x > 979) {
+      if (this.dragObj.x > 979) {
         this.finalmove(11, x7);
       }
     } //нижние плейсхолдеры
     else {
       //placeholder-1
-      if (pointer.x < 180) {
+      if (this.dragObj.x < 180) {
         this.peremeschenie(1, x1);
       }
       //placeholder-2
-      if (pointer.x > 179 && pointer.x < 340) {
+      if (this.dragObj.x > 179 && this.dragObj.x < 340) {
         this.peremeschenie(2, x2);
       }
       //placeholder-3
-      if (pointer.x > 339 && pointer.x < 500) {
+      if (this.dragObj.x > 339 && this.dragObj.x < 500) {
         this.peremeschenie(3, x3);
       }
       //placeholder-4
-      if (pointer.x > 499 && pointer.x < 660) {
+      if (this.dragObj.x > 499 && this.dragObj.x < 660) {
         this.peremeschenie(4, x4);
       }
       //placeholder-5
-      if (pointer.x > 659 && pointer.x < 820) {
+      if (this.dragObj.x > 659 && this.dragObj.x < 820) {
         this.peremeschenie(5, x5);
       }
       //placeholder-6
-      if (pointer.x > 819 && pointer.x < 980) {
+      if (this.dragObj.x > 819 && this.dragObj.x < 980) {
         this.peremeschenie(6, x6);
       }
       //placeholder-7
-      if (pointer.x > 979) {
+      if (this.dragObj.x > 979) {
         this.peremeschenie(7, x7);
       }
     }
@@ -292,7 +298,7 @@ var WorldScene = new Phaser.Class({
       if (this.dragObj.weight == obj.weight - 1) {
         eval("this.deck" + pl_out + "[0].plo+=1"); //плюсуем счетчик открытых карт
         this.dragObj.x = xx;
-        this.dragObj.y = y2 + eval("this.deck" + pl_out + ".length - 1") * y_shift;
+        this.dragObj.y = eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].sy") + y_shift;
         //запоминаем стартовые координаты
         this.dragObj.sx = this.dragObj.x;
         this.dragObj.sy = this.dragObj.y;
@@ -301,15 +307,9 @@ var WorldScene = new Phaser.Class({
         //если захватил больше одной карты
         var l = eval("this.deck" + pl_out + ".length"); //запоминаем позицию перемещения карты, за которую тянем до начала цикла
         if (this.upcard > 0) {
-          console.log("Upcard - " + this.upcard);
-          console.log("Drag - Pos - " + this.dragObj.pos);
-          //console.log("Length - " + eval("this.deck" + this.dragObj.pl + ".length"));
           for (let i = 1; i < this.upcard + 1; i++) /*цикл по картам сверху*/ {
             //todo **************** */
-            console.log("pl - " + pl);
-            console.log("Up-" + i + "-pos: " + eval("this.deck" + pl + "[this.dragObj.pos + i].pos"));
-            //todo **************** */
-            //! Теряется карта как объект в цикле !!!
+            //! Проблемы с глубиной и проблемы с перемещением на ace плейсхолдеры !!!
 
             eval("this.deck" + pl + "[this.dragObj.pos + i].x = xx");
             eval("this.deck" + pl + "[this.dragObj.pos + i].y = this.dragObj.y + y_shift*i");
@@ -322,38 +322,28 @@ var WorldScene = new Phaser.Class({
             //eval("this.deck" + this.dragObj.pl + "[this.dragObj.pos + i].scale = 1");
             //Perenos
             let temp = l + this.upcard + 1 - i;
-            console.log("Befor - " + eval("this.deck" + pl_out + ".length - i"));
             eval("this.deck" + pl_out + "[temp] = this.deck" + pl + ".pop()"); //perenos mejdu massivami
-            console.log("1 = " + temp + ", 2 = " + eval("this.deck" + pl_out + ".length - i"));
             eval("this.deck" + pl_out + "[temp].pos = this.deck" + pl_out + ".length - i");
             eval("this.deck" + pl + "[0].plo -= 1 "); //minusuem schetchik otkrytyj kart
             eval("this.deck" + pl_out + "[temp].pl = pl_out");
           }
-          console.log("After - " + eval("this.deck" + pl_out + ".length - 1"));
           eval("this.dragObj.pos = l");
           eval("this.deck" + pl_out + "[l] = this.deck" + pl + ".pop()"); //perenos mejdu massivami
           eval("this.deck" + pl + "[0].plo -= 1"); //minusuem schetchik otkrytyj kart
           this.dragObj.pl = pl_out;
         } else {
           //Perenos
-          console.log("Pos-1card befor - " + this.dragObj.pos);
           this.dragObj.pos = l;
-          console.log("Pos-1card after - " + this.dragObj.pos);
           eval("this.deck" + pl_out + ".push(this.deck" + pl + ".pop())"); //perenos mejdu massivami
-          console.log("Pos-in-massive- " + eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].pos"));
           eval("this.deck" + pl + "[0].plo -= 1"); //minusuem schetchik otkrytyj kart
           this.dragObj.pl = pl_out;
         }
         //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
         if (eval("this.deck" + pl + "[0].plc > 0")) {
-          // console.log("PLC > 0");
-          // console.log("PLO = " + eval("this.deck" + pl + "[0].plo"));
           if (eval("this.deck" + pl + "[0].plo") == 0) {
-            // console.log("Ona");
             eval("this.deck" + pl + "[0].plo += 1"); //vozvrashaem nazad schetchik, potomu chto otkryli rubashku
             eval("this.deck" + pl + "[0].plcc -= 1");
             eval("this.deck" + pl + "[this.deck" + pl + ".length - 1].setInteractive()");
-            // console.log("PLO2 = " + eval("this.deck" + pl + "[0].plo"));
             this.remove_shirt(pl);
           }
         }
@@ -392,23 +382,23 @@ var WorldScene = new Phaser.Class({
         eval("this.deck" + pl_out + "[0].plo +=1");
         this.dragObj.x = xx;
         this.dragObj.y = y1; // + eval("this.deck" + pl_out + ".length - 1") * y_shift;
+        //запоминаем стартовые координаты
         this.dragObj.sx = this.dragObj.x;
         this.dragObj.sy = this.dragObj.y;
-
         //Perenos
         eval("this.dragObj.pos = this.deck" + pl_out + ".length");
         eval("this.deck" + pl_out + ".push(this.deck" + pl + ".pop())"); //perenos mejdu massivami
         eval("this.deck" + pl + "[0].plo -=1"); //minusuem schetchik otkrytyj kart
         this.dragObj.pl = pl_out;
-
         //открываем карту - убираем рубашку, если она есть, из placeholdera из которого взяли карту
         if (eval("this.deck" + pl + "[0].plc > 0")) {
-          eval("this.deck" + pl + "[0].plo +=1"); //vozvrashaem nazad schetchik, potomu chto otkryli rubashku
-          eval("this.deck" + pl + "[0].plc -=1");
-          eval("this.deck" + pl + "[this.deck" + pl + ".length - 1].setInteractive()");
-          this.remove_shirt(pl);
+          if (eval("this.deck" + pl + "[0].plo") == 0) {
+            eval("this.deck" + pl + "[0].plo +=1"); //vozvrashaem nazad schetchik, potomu chto otkryli rubashku
+            eval("this.deck" + pl + "[0].plc -=1");
+            eval("this.deck" + pl + "[this.deck" + pl + ".length - 1].setInteractive()");
+            this.remove_shirt(pl);
+          }
         }
-
         //! -- konec peremeschenija
       } else {
         this.dragObj.x = this.dragObj.sx;
@@ -480,6 +470,7 @@ var WorldScene = new Phaser.Class({
       eval("this.deck" + i + "[0].plo = 0");
       eval("this.deck" + i + "[0].plc = 0");
       eval("this.deck" + i + "[0].weight = 14");
+      eval("this.deck" + i + "[0].sy = posy - y_shift");
       do {
         eval("this.deck" + i + "[0].plo +=1");
         name = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
@@ -500,7 +491,7 @@ var WorldScene = new Phaser.Class({
           k++; //index rubashek
         }
         j++;
-        posy = posy + y_shift;
+        posy = posy + y_shift / 2;
       } while (j < i + 1);
       posx = posx + 160;
     }
