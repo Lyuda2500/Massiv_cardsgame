@@ -181,7 +181,7 @@ var WorldScene = new Phaser.Class({
 
         console.log("Klick - name: " + this.dragObj.name);
         // console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
-        console.log("Klick - pos " + this.dragObj.depth);
+        console.log("Klick - pos " + this.dragObj.sd);
         //!----------------------------------
         var o;
         eval("o = this.deck" + this.dragObj.pl + ".length - 1");
@@ -191,19 +191,8 @@ var WorldScene = new Phaser.Class({
         //!----------------------------------
 
         //определяем количество карт сверху
-        this.upcard = eval("this.deck" + this.dragObj.pl + ".length-1") - this.dragObj.depth;
-
-        //поднимает карту над остальными если она последняя
-        if (this.upcard == 0) {
-          this.dragObj.depth = 25;
-          //this.dragObj.scale = 1.05;
-        } else {
-          for (let i = 1; i < this.upcard + 2; i++) {
-            eval("this.deck" + this.dragObj.pl + "[this.dragObj.sd + i-1].depth = 25 + i");
-            // eval("this.deck" + this.dragObj.pl + "[this.dragObj.depth + i-1].scale = 1.05");
-          }
-        }
-
+        this.upcard = eval("this.deck" + this.dragObj.pl + ".length-1") - this.dragObj.sd;
+        console.log("UPCARD - " + this.upcard);
         this.input.on("pointermove", this.doDrag, this); //включение движения
       }
       this.input.on("pointerup", this.stopDrag, this);
@@ -213,7 +202,17 @@ var WorldScene = new Phaser.Class({
   doDrag(pointer) {
     this.dragObj.x = pointer.x;
     this.dragObj.y = pointer.y;
-
+    console.log("drag");
+    //поднимает карту над остальными если она последняя
+    if (this.upcard == 0) {
+      this.dragObj.depth = 25;
+      //this.dragObj.scale = 1.05;
+    } else {
+      for (let i = 1; i < this.upcard + 2; i++) {
+        eval("this.deck" + this.dragObj.pl + "[this.dragObj.sd + i-1].depth = 25 + i");
+        // eval("this.deck" + this.dragObj.pl + "[this.dragObj.depth + i-1].scale = 1.05");
+      }
+    }
     //код ниже тянет пачку
     //если захватил больше одной карты
     if (this.upcard > 0) {
@@ -300,11 +299,10 @@ var WorldScene = new Phaser.Class({
         eval("this.deck" + pl_out + "[0].plo+=1"); //плюсуем счетчик открытых карт
         this.dragObj.x = xx;
         this.dragObj.y = eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].sy") + y_shift;
-        this.dragObj.depth = eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].depth + 1");
+        this.dragObj.depth = eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].sd + 1");
         //запоминаем стартовые координаты
         this.dragObj.sx = this.dragObj.x;
         this.dragObj.sy = this.dragObj.y;
-        this.dragObj.sd = this.dragObj.depth;
 
         //код ниже тянет пачку
         //если захватил больше одной карты
@@ -330,13 +328,13 @@ var WorldScene = new Phaser.Class({
             eval("this.deck" + pl + "[0].plo -= 1 "); //minusuem schetchik otkrytyj kart
             eval("this.deck" + pl_out + "[temp].pl = pl_out");
           }
-          eval("this.dragObj.depth = l");
+          // this.dragObj.depth = l;
           eval("this.deck" + pl_out + "[l] = this.deck" + pl + ".pop()"); //perenos mejdu massivami
           eval("this.deck" + pl + "[0].plo -= 1"); //minusuem schetchik otkrytyj kart
           this.dragObj.pl = pl_out;
         } else {
           //Логический перенос основной карты
-          this.dragObj.depth = l;
+          // this.dragObj.depth = l;
           eval("this.deck" + pl_out + ".push(this.deck" + pl + ".pop())"); //perenos mejdu massivami
           eval("this.deck" + pl + "[0].plo -= 1"); //minusuem schetchik otkrytyj kart
           this.dragObj.pl = pl_out;
@@ -350,6 +348,7 @@ var WorldScene = new Phaser.Class({
             this.remove_shirt(pl);
           }
         }
+        this.dragObj.sd = this.dragObj.depth;
         //! -- konec peremeschenija
       } else {
         this.dragObj.x = this.dragObj.sx;
