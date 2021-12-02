@@ -155,9 +155,7 @@ var WorldScene = new Phaser.Class({
         //Если в колоде есть карты (есть рубашка - рубашка пропадает когда карты кончились)
         if (this.dragObj.name == "shirt") {
           //Проверяем, если в колоде кончиличь карты - убираем рубашку
-          if (this.crd.length == 0) {
-            this.shirt[0].visible = false;
-          } else {
+          if (this.crd.length > 0) {
             //Иначе продолжаем вытаскивать карты из колоды
             this.deck0[0].plo += 1; //Необходимо для правильной работы логики перемещения между массивами
             let name = this.crd.pop();
@@ -173,6 +171,7 @@ var WorldScene = new Phaser.Class({
             this.deck0[this.deck0.length - 1].sd = this.deck0.length - 1;
             //console.log("FPC - " + this.deck12[this.deck12.length - 1].name);
             this.deck0[this.deck0.length - 1].setInteractive();
+            if (this.crd.length == 0) this.shirt[0].visible = false;
           }
         }
         //конец секции обработки стартовых плейсхолдеров (левый верхний угол)
@@ -232,11 +231,21 @@ var WorldScene = new Phaser.Class({
 
     if (this.dragObj.y < y1 + card_heigth / 2) {
       //верхние плейсхолдеры
-
+      if (this.dragObj.x < x2 + card_width / 2) {
+        this.dragObj.x = this.dragObj.sx;
+        this.dragObj.y = this.dragObj.sy;
+        this.dragObj.depth = this.dragObj.sd;
+        //kod nizhe tianet pachku
+        if (this.upcard > 0) {
+          for (let i = 1; i < this.upcard + 1; i++) /*цикл po kartam sverhu*/ {
+            eval("this.deck" + pl + "[this.dragObj.sd + i].x = this.dragObj.sx");
+            eval("this.deck" + pl + "[this.dragObj.sd + i].y = this.dragObj.sy + y_shift*i");
+            eval("this.deck" + pl + "[this.dragObj.sd + i].depth = this.dragObj.sd");
+          }
+        }
+      }
       // ace placeholder 1
-      this.dragObj.x > 499 && this.dragObj.x < 660;
-
-      if (this.dragObj.x > 499 && this.dragObj.x < 660) {
+      if (this.dragObj.x > x2 + card_width / 2 && this.dragObj.x < 660) {
         this.finalmove(8, x4);
       }
       //ace placeholder 2
@@ -474,6 +483,9 @@ var WorldScene = new Phaser.Class({
     //vykladka rubashki
     this.shirt.push(this.add.sprite(x1, y1, "card_shirt", "card_shirt"));
     this.shirt[0].depth = 1; //setDepth(1);
+    this.shirt[0].sd = 1;
+    this.shirt[0].sx = x1;
+    this.shirt[0].sy = y1;
     this.shirt[0].name = "shirt";
     this.shirt[0].setInteractive();
     for (let i = 1; i <= 7; i++) {
@@ -532,6 +544,9 @@ var WorldScene = new Phaser.Class({
     //Nachalo
     this.deck12[0] = this.add.sprite(x1, y1, "placeholder", "placeholder_16");
     this.deck12[0].name = "placeholder";
+    this.deck12[0].sd = 0;
+    this.deck12[0].sx = x1;
+    this.deck12[0].sy = y1;
     this.deck12[0].setInteractive();
     this.deck0[0] = this.add.sprite(x2, y1, "placeholder", "placeholder_14");
     this.deck0[0].name = "placeholder";
