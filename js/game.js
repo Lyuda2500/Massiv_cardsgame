@@ -202,7 +202,7 @@ var WorldScene = new Phaser.Class({
   doDrag(pointer) {
     this.dragObj.x = pointer.x;
     this.dragObj.y = pointer.y;
-    console.log("drag");
+
     //поднимает карту над остальными если она последняя
     if (this.upcard == 0) {
       this.dragObj.depth = 25;
@@ -480,7 +480,9 @@ var WorldScene = new Phaser.Class({
       eval("this.deck" + i + "[0].plo = 0");
       eval("this.deck" + i + "[0].plc = 0");
       eval("this.deck" + i + "[0].weight = 14");
-      eval("this.deck" + i + "[0].sy = posy - y_shift");
+      eval("this.deck" + i + "[0].sy = y2 - y_shift");
+      eval("this.deck" + i + "[0].sd = 0");
+
       do {
         eval("this.deck" + i + "[0].plo +=1");
         name = this.crd[this.crd.length - 1]; //zapominaem nazvanie kart vyhodiashih iz kolody v igru
