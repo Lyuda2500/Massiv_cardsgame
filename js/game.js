@@ -300,6 +300,7 @@ var WorldScene = new Phaser.Class({
         this.dragObj.x = xx;
         this.dragObj.y = eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].sy") + y_shift;
         this.dragObj.depth = eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].sd + 1");
+
         //запоминаем стартовые координаты
         this.dragObj.sx = this.dragObj.x;
         this.dragObj.sy = this.dragObj.y;
@@ -311,17 +312,19 @@ var WorldScene = new Phaser.Class({
           for (let i = 1; i < this.upcard + 1; i++) /*цикл по картам сверху*/ {
             //todo **************** */
             //! Проблемы с глубиной и проблемы с перемещением на ace плейсхолдеры !!!
-
+            //Визуальный перенос
             eval("this.deck" + pl + "[this.dragObj.sd + i].x = xx");
             eval("this.deck" + pl + "[this.dragObj.sd + i].y = this.dragObj.y + y_shift*i");
             eval("this.deck" + pl + "[this.dragObj.sd + i].sx = xx");
             eval("this.deck" + pl + "[this.dragObj.sd + i].sy = this.dragObj.y + y_shift*i");
-            eval("this.deck" + pl + "[this.dragObj.sd + i].depth = this.dragObj.sd + i");
+            eval("this.deck" + pl + "[this.dragObj.sd + i].depth = this.dragObj.depth + i");
+            eval("this.deck" + pl + "[this.dragObj.sd + i].sd = this.dragObj.depth + i");
           }
+          //Логический перенос
           for (let i = 1; i < this.upcard + 1; i++) /*цикл по картам сверху*/ {
             eval("this.deck" + pl_out + "[0].plo += 1"); //плюсуем счетчик открытых карт
             //eval("this.deck" + this.dragObj.pl + "[this.dragObj.sd + i].scale = 1");
-            //Логический перенос пачки
+
             let temp = l + this.upcard + 1 - i;
             eval("this.deck" + pl_out + "[temp] = this.deck" + pl + ".pop()"); //perenos mejdu massivami
             //eval("this.deck" + pl_out + "[temp].depth = this.deck" + pl_out + ".length - i");
