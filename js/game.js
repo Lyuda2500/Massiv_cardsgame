@@ -11,6 +11,8 @@ const x7 = 1060;
 const y_shift = 30; //! Smeschenie po vertikali
 const card_width = 142;
 const card_heigth = 206;
+const undo_x = 1200;
+const undo_y = 150;
 //---Section of Global Variables---
 
 //---Section of User Functions---
@@ -76,6 +78,8 @@ var BootScene = new Phaser.Class({
     this.load.atlas("placeholder", "assets/cards/placeholder.png", "assets/cards/placeholder_atlas.json");
     this.load.atlas("card_shirt", "assets/cards/card_shirt.png", "assets/cards/card_shirt_atlas.json");
     this.load.atlas("cards", "assets/cards/cards.png", "assets/cards/cards_atlas.json");
+    this.load.svg("undo", "img/undo.svg");
+    // this.load.img("img", "assets");
   },
 
   create: function () {
@@ -118,6 +122,9 @@ var WorldScene = new Phaser.Class({
     this.deck10 = [];
     this.deck11 = [];
 
+    //Массив для возврата хода
+    this.undo = [];
+
     //peremennye dlia peremeschenia pachki kart
     this.upcard = 0; //skolko kart lezhit sverhu
 
@@ -134,8 +141,17 @@ var WorldScene = new Phaser.Class({
   //! nachinaem dvigat
   startDrag(pointer, targets) {
     this.dragObj = targets[0];
+    //Секция обработки кнопки "Отмена хода"
+    if (pointer.y > undo_y - 15 && pointer.y < undo_y + 15 && pointer.x > undo_x - 15 && pointer.x < undo_x + 15) {
+      //Визуальный перенос
+      console.log(this.undo[this.undo.length - 1].sx);
+      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].x = this.undo[this.undo.length - 1].sx");
+      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].y = this.undo[this.undo.length - 1].sy");
+      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].depth = this.undo[this.undo.length - 1].sd");
+    }
     if (this.dragObj instanceof Phaser.GameObjects.Sprite) {
       this.input.off("pointerdown", this.startDrag, this);
+
       //секция обработки стартовых плейсхолдеров (левый верхний угол)
       //Если взаимодействуем с колодой
       if (this.dragObj.x == x1 && this.dragObj.y == y1) {
@@ -178,20 +194,20 @@ var WorldScene = new Phaser.Class({
       } else {
         //Иначе, - Если взаимодействуем с остальными картами
 
-        console.log("Klick - name: " + this.dragObj.name);
-        // console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
-        console.log("Klick - pos " + this.dragObj.sd);
+        // console.log("Klick - name: " + this.dragObj.name);
+        // // console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
+        // console.log("Klick - pos " + this.dragObj.sd);
         //!----------------------------------
-        var o;
-        eval("o = this.deck" + this.dragObj.pl + ".length - 1");
-        for (let i = 1; i <= o; i++) {
-          console.log(eval("this.deck" + this.dragObj.pl + "[i].name"));
-        }
+        // var o;
+        // eval("o = this.deck" + this.dragObj.pl + ".length - 1");
+        // for (let i = 1; i <= o; i++) {
+        //   console.log(eval("this.deck" + this.dragObj.pl + "[i].name"));
+        // }
         //!----------------------------------
 
         //определяем количество карт сверху
         this.upcard = eval("this.deck" + this.dragObj.pl + ".length-1") - this.dragObj.sd;
-        console.log("UPCARD - " + this.upcard);
+        // console.log("UPCARD - " + this.upcard);
         this.input.on("pointermove", this.doDrag, this); //включение движения
       }
       this.input.on("pointerup", this.stopDrag, this);
@@ -313,7 +329,12 @@ var WorldScene = new Phaser.Class({
         //запоминаем стартовые координаты
         this.dragObj.sx = this.dragObj.x;
         this.dragObj.sy = this.dragObj.y;
-
+        //**********
+        this.undo.push(this.dragObj);
+        this.undo[this.undo.length - 1].pl_out = pl_out;
+        this.undo[this.undo.length - 1].plc = eval("this.deck" + pl + "[0].plc");
+        console.log("Pl_Out " + this.undo[0].pl_out + "Pl " + this.undo[0].pl);
+        //**********
         //код ниже тянет пачку
         //если захватил больше одной карты
         var l = eval("this.deck" + pl_out + ".length"); //запоминаем позицию перемещения карты, за которую тянем до начала цикла
@@ -480,6 +501,9 @@ var WorldScene = new Phaser.Class({
     var posy = y2;
     var j;
     var name;
+    //Кнопка Отмена хода
+    this.add.image(undo_x, undo_y, "undo");
+
     //vykladka rubashki
     this.shirt.push(this.add.sprite(x1, y1, "card_shirt", "card_shirt"));
     this.shirt[0].depth = 1; //setDepth(1);
