@@ -14,7 +14,7 @@ const card_heigth = 206;
 const undo_x = 1200;
 const undo_y = 150;
 //---Section of Global Variables---
-
+var last_shirt;
 //---Section of User Functions---
 //uluchshenyj randomaizer
 function getRandomInt(max) {
@@ -124,6 +124,8 @@ var WorldScene = new Phaser.Class({
 
     //Массив для возврата хода
     this.undo = [];
+    // создаём объект с нулевым прототипом
+    this.o = Object.create(null);
 
     //peremennye dlia peremeschenia pachki kart
     this.upcard = 0; //skolko kart lezhit sverhu
@@ -148,6 +150,21 @@ var WorldScene = new Phaser.Class({
       eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].x = this.undo[this.undo.length - 1].sx");
       eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].y = this.undo[this.undo.length - 1].sy");
       eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].depth = this.undo[this.undo.length - 1].sd");
+
+      //Логический перенос основной карты
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + ".push(this.deck" + this.undo[this.undo.length - 1].pl_out + ".pop())"); //perenos mejdu massivami
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sx = this.undo[this.undo.length - 1].sx");
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sy = this.undo[this.undo.length - 1].sy");
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].pl = this.undo[this.undo.length - 1].pl");
+
+      //возвращаем счетчики открытых карт в исходное состояние
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plo += 1");
+      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[0].plo -= 1");
+
+      //возвращаем рубашку на место если она там была
+      if (this.undo[this.undo.length - 1].plc > 0) {
+        this.shirt[last_shirt].visible = true;
+      }
     }
     if (this.dragObj instanceof Phaser.GameObjects.Sprite) {
       this.input.off("pointerdown", this.startDrag, this);
@@ -198,11 +215,11 @@ var WorldScene = new Phaser.Class({
         // // console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
         // console.log("Klick - pos " + this.dragObj.sd);
         //!----------------------------------
-        // var o;
-        // eval("o = this.deck" + this.dragObj.pl + ".length - 1");
-        // for (let i = 1; i <= o; i++) {
-        //   console.log(eval("this.deck" + this.dragObj.pl + "[i].name"));
-        // }
+        var o;
+        eval("o = this.deck" + this.dragObj.pl + ".length - 1");
+        for (let i = 1; i <= o; i++) {
+          console.log(eval("this.deck" + this.dragObj.pl + "[i].name"));
+        }
         //!----------------------------------
 
         //определяем количество карт сверху
@@ -321,6 +338,11 @@ var WorldScene = new Phaser.Class({
     if (obj.color != this.dragObj.color || obj.name == "placeholder_14") {
       //если вес меньше на 1
       if (this.dragObj.weight == obj.weight - 1) {
+        //запоминаем текущую расстановку карт для метода UNDO
+        this.undo.push(Object.assign(this.o, this.dragObj));
+        this.undo[this.undo.length - 1].pl_out = pl_out;
+        this.undo[this.undo.length - 1].plc = eval("this.deck" + pl + "[0].plc");
+        //**********
         eval("this.deck" + pl_out + "[0].plo+=1"); //плюсуем счетчик открытых карт
         this.dragObj.x = xx;
         this.dragObj.y = eval("this.deck" + pl_out + "[this.deck" + pl_out + ".length-1].sy") + y_shift;
@@ -329,12 +351,7 @@ var WorldScene = new Phaser.Class({
         //запоминаем стартовые координаты
         this.dragObj.sx = this.dragObj.x;
         this.dragObj.sy = this.dragObj.y;
-        //**********
-        this.undo.push(this.dragObj);
-        this.undo[this.undo.length - 1].pl_out = pl_out;
-        this.undo[this.undo.length - 1].plc = eval("this.deck" + pl + "[0].plc");
-        console.log("Pl_Out " + this.undo[0].pl_out + "Pl " + this.undo[0].pl);
-        //**********
+
         //код ниже тянет пачку
         //если захватил больше одной карты
         var l = eval("this.deck" + pl_out + ".length"); //запоминаем позицию перемещения карты, за которую тянем до начала цикла
@@ -456,42 +473,103 @@ var WorldScene = new Phaser.Class({
   remove_shirt(pos) {
     //placeholder - 2
     if (pos == 2) {
+      last_shirt = 1;
       this.shirt[1].visible = false;
     }
     //placeholder - 3
     if (pos == 3) {
-      if (eval("this.deck" + pos + ".length == 3")) this.shirt[3].visible = false;
-      if (eval("this.deck" + pos + ".length == 2")) this.shirt[2].visible = false;
+      if (eval("this.deck" + pos + ".length == 3")) {
+        last_shirt = 3;
+        this.shirt[3].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 2")) {
+        last_shirt = 2;
+        this.shirt[2].visible = false;
+      }
     }
     //placeholder - 4
     if (pos == 4) {
-      if (eval("this.deck" + pos + ".length == 4")) this.shirt[6].visible = false;
-      if (eval("this.deck" + pos + ".length == 3")) this.shirt[5].visible = false;
-      if (eval("this.deck" + pos + ".length == 2")) this.shirt[4].visible = false;
+      if (eval("this.deck" + pos + ".length == 4")) {
+        last_shirt = 6;
+        this.shirt[6].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 3")) {
+        last_shirt = 5;
+        this.shirt[5].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 2")) {
+        last_shirt = 4;
+        this.shirt[4].visible = false;
+      }
     }
     //placeholder - 5
     if (pos == 5) {
-      if (eval("this.deck" + pos + ".length == 5")) this.shirt[10].visible = false;
-      if (eval("this.deck" + pos + ".length == 4")) this.shirt[9].visible = false;
-      if (eval("this.deck" + pos + ".length == 3")) this.shirt[8].visible = false;
-      if (eval("this.deck" + pos + ".length == 2")) this.shirt[7].visible = false;
+      if (eval("this.deck" + pos + ".length == 5")) {
+        last_shirt = 10;
+        this.shirt[10].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 4")) {
+        last_shirt = 9;
+        this.shirt[9].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 3")) {
+        last_shirt = 8;
+        this.shirt[8].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 2")) {
+        last_shirt = 7;
+        this.shirt[7].visible = false;
+      }
     }
     //placeholder - 6
     if (pos == 6) {
-      if (eval("this.deck" + pos + ".length == 6")) this.shirt[15].visible = false;
-      if (eval("this.deck" + pos + ".length == 5")) this.shirt[14].visible = false;
-      if (eval("this.deck" + pos + ".length == 4")) this.shirt[13].visible = false;
-      if (eval("this.deck" + pos + ".length == 3")) this.shirt[12].visible = false;
-      if (eval("this.deck" + pos + ".length == 2")) this.shirt[11].visible = false;
+      if (eval("this.deck" + pos + ".length == 6")) {
+        last_shirt = 15;
+        this.shirt[15].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 5")) {
+        last_shirt = 14;
+        this.shirt[14].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 4")) {
+        last_shirt = 13;
+        this.shirt[13].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 3")) {
+        last_shirt = 12;
+        this.shirt[12].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 2")) {
+        last_shirt = 11;
+        this.shirt[11].visible = false;
+      }
     }
     //placeholder - 7
     if (pos == 7) {
-      if (eval("this.deck" + pos + ".length == 7")) this.shirt[21].visible = false;
-      if (eval("this.deck" + pos + ".length == 6")) this.shirt[20].visible = false;
-      if (eval("this.deck" + pos + ".length == 5")) this.shirt[19].visible = false;
-      if (eval("this.deck" + pos + ".length == 4")) this.shirt[18].visible = false;
-      if (eval("this.deck" + pos + ".length == 3")) this.shirt[17].visible = false;
-      if (eval("this.deck" + pos + ".length == 2")) this.shirt[16].visible = false;
+      if (eval("this.deck" + pos + ".length == 7")) {
+        last_shirt = 21;
+        this.shirt[21].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 6")) {
+        last_shirt = 20;
+        this.shirt[20].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 5")) {
+        last_shirt = 19;
+        this.shirt[19].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 4")) {
+        last_shirt = 18;
+        this.shirt[18].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 3")) {
+        last_shirt = 17;
+        this.shirt[17].visible = false;
+      }
+      if (eval("this.deck" + pos + ".length == 2")) {
+        last_shirt = 16;
+        this.shirt[16].visible = false;
+      }
     }
   },
   //metod of first card load
