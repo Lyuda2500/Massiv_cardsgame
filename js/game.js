@@ -155,16 +155,21 @@ var WorldScene = new Phaser.Class({
       eval("this.deck" + this.undo[this.undo.length - 1].pl + ".push(this.deck" + this.undo[this.undo.length - 1].pl_out + ".pop())"); //perenos mejdu massivami
       eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sx = this.undo[this.undo.length - 1].sx");
       eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sy = this.undo[this.undo.length - 1].sy");
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sd = this.undo[this.undo.length - 1].sd");
       eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].pl = this.undo[this.undo.length - 1].pl");
-
-      //возвращаем счетчики открытых карт в исходное состояние
-      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plo += 1");
-      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[0].plo -= 1");
 
       //возвращаем рубашку на место если она там была
       if (this.undo[this.undo.length - 1].plc > 0) {
         this.shirt[last_shirt].visible = true;
+        //возвращаем счетчик закрытых карт в исходное состояние
+        console.log("PLC1 - " + eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc"));
+        eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc += 1");
+        console.log("PLC2 - " + eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc"));
+      } else {
+        //возвращаем счетчики открытых карт в исходное состояние
+        eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plo += 1");
       }
+      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[0].plo -= 1");
     }
     if (this.dragObj instanceof Phaser.GameObjects.Sprite) {
       this.input.off("pointerdown", this.startDrag, this);
@@ -212,14 +217,19 @@ var WorldScene = new Phaser.Class({
         //Иначе, - Если взаимодействуем с остальными картами
 
         // console.log("Klick - name: " + this.dragObj.name);
-        // // console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
-        // console.log("Klick - pos " + this.dragObj.sd);
+        console.log("Klick - plc: " + eval("this.deck" + this.dragObj.pl + "[0].plc"));
+        console.log("Klick - plo: " + eval("this.deck" + this.dragObj.pl + "[0].plo"));
+        console.log("Klick - length: " + eval("this.deck" + this.dragObj.pl + ".length"));
+        console.log("Klick - pl " + this.dragObj.pl);
+        console.log("Klick - sy " + this.dragObj.sy);
+        console.log("Klick - sd " + this.dragObj.sd);
+        console.log("Klick - depth " + this.dragObj.depth);
         //!----------------------------------
-        var o;
-        eval("o = this.deck" + this.dragObj.pl + ".length - 1");
-        for (let i = 1; i <= o; i++) {
-          console.log(eval("this.deck" + this.dragObj.pl + "[i].name"));
-        }
+        // var o;
+        // eval("o = this.deck" + this.dragObj.pl + ".length - 1");
+        // for (let i = 1; i <= o; i++) {
+        //   console.log(eval("this.deck" + this.dragObj.pl + "[i].name"));
+        // }
         //!----------------------------------
 
         //определяем количество карт сверху
@@ -393,7 +403,7 @@ var WorldScene = new Phaser.Class({
         if (eval("this.deck" + pl + "[0].plc > 0")) {
           if (eval("this.deck" + pl + "[0].plo") == 0) {
             eval("this.deck" + pl + "[0].plo += 1"); //vozvrashaem nazad schetchik, potomu chto otkryli rubashku
-            eval("this.deck" + pl + "[0].plcc -= 1");
+            eval("this.deck" + pl + "[0].plc -= 1");
             eval("this.deck" + pl + "[this.deck" + pl + ".length - 1].setInteractive()");
             this.remove_shirt(pl);
           }
