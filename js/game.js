@@ -13,6 +13,7 @@ const card_width = 142;
 const card_heigth = 206;
 const undo_x = 1200;
 const undo_y = 150;
+var allow_undo = true;
 //---Section of Global Variables---
 var last_shirt;
 //---Section of User Functions---
@@ -144,33 +145,7 @@ var WorldScene = new Phaser.Class({
   startDrag(pointer, targets) {
     this.dragObj = targets[0];
     //Секция обработки кнопки "Отмена хода"
-    if (pointer.y > undo_y - 15 && pointer.y < undo_y + 15 && pointer.x > undo_x - 15 && pointer.x < undo_x + 15 && this.undo[this.undo.length - 1].pl > 0) {
-      //Визуальный перенос
-      console.log(this.undo[this.undo.length - 1].sx);
-      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].x = this.undo[this.undo.length - 1].sx");
-      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].y = this.undo[this.undo.length - 1].sy");
-      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].depth = this.undo[this.undo.length - 1].sd");
-
-      //Логический перенос основной карты
-      eval("this.deck" + this.undo[this.undo.length - 1].pl + ".push(this.deck" + this.undo[this.undo.length - 1].pl_out + ".pop())"); //perenos mejdu massivami
-      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sx = this.undo[this.undo.length - 1].sx");
-      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sy = this.undo[this.undo.length - 1].sy");
-      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sd = this.undo[this.undo.length - 1].sd");
-      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].pl = this.undo[this.undo.length - 1].pl");
-
-      //возвращаем рубашку на место если она там была
-      if (this.undo[this.undo.length - 1].plc > 0) {
-        this.shirt[last_shirt].visible = true;
-        //возвращаем счетчик закрытых карт в исходное состояние
-        console.log("PLC1 - " + eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc"));
-        eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc += 1");
-        console.log("PLC2 - " + eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc"));
-      } else {
-        //возвращаем счетчики открытых карт в исходное состояние
-        eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plo += 1");
-      }
-      eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[0].plo -= 1");
-    }
+    if (allow_undo && pointer.y > undo_y - 15 && pointer.y < undo_y + 15 && pointer.x > undo_x - 15 && pointer.x < undo_x + 15 && this.undo[this.undo.length - 1].pl > 0) this.undo_move();
     if (this.dragObj instanceof Phaser.GameObjects.Sprite) {
       this.input.off("pointerdown", this.startDrag, this);
 
@@ -349,6 +324,7 @@ var WorldScene = new Phaser.Class({
       //если вес меньше на 1
       if (this.dragObj.weight == obj.weight - 1) {
         //запоминаем текущую расстановку карт для метода UNDO
+        allow_undo = true;
         this.undo.push(Object.assign(this.o, this.dragObj));
         this.undo[this.undo.length - 1].pl_out = pl_out;
         this.undo[this.undo.length - 1].plc = eval("this.deck" + pl + "[0].plc");
@@ -445,6 +421,7 @@ var WorldScene = new Phaser.Class({
     if (obj.suit == this.dragObj.suit || obj.name == "placeholder") {
       //esli ves bolshe na 1
       if (obj.weight == this.dragObj.weight - 1) {
+        allow_undo = false; //запрет UNDO
         eval("this.deck" + pl_out + "[0].plo +=1");
         this.dragObj.x = xx;
         this.dragObj.y = y1;
@@ -479,7 +456,37 @@ var WorldScene = new Phaser.Class({
       this.dragObj.depth = this.dragObj.sd;
     }
   },
-  //metod of remove shirts
+  //Метод отмены хода
+  undo_move() {
+    allow_undo = false;
+
+    //Визуальный перенос основной карты
+    console.log(this.undo[this.undo.length - 1].sx);
+    eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].x = this.undo[this.undo.length - 1].sx");
+    eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].y = this.undo[this.undo.length - 1].sy");
+    eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].depth = this.undo[this.undo.length - 1].sd");
+
+    //Логический перенос основной карты
+    eval("this.deck" + this.undo[this.undo.length - 1].pl + ".push(this.deck" + this.undo[this.undo.length - 1].pl_out + ".pop())"); //perenos mejdu massivami
+    eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sx = this.undo[this.undo.length - 1].sx");
+    eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sy = this.undo[this.undo.length - 1].sy");
+    eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].sd = this.undo[this.undo.length - 1].sd");
+    eval("this.deck" + this.undo[this.undo.length - 1].pl + "[this.deck" + this.undo[this.undo.length - 1].pl + ".length - 1].pl = this.undo[this.undo.length - 1].pl");
+
+    //возвращаем рубашку на место если она там была
+    if (this.undo[this.undo.length - 1].plc > 0) {
+      this.shirt[last_shirt].visible = true;
+      //возвращаем счетчик закрытых карт в исходное состояние
+      console.log("PLC1 - " + eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc"));
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc += 1");
+      console.log("PLC2 - " + eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plc"));
+    } else {
+      //возвращаем счетчики открытых карт в исходное состояние
+      eval("this.deck" + this.undo[this.undo.length - 1].pl + "[0].plo += 1");
+    }
+    eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[0].plo -= 1");
+  },
+  //Метод удаления рубашки
   remove_shirt(pos) {
     //placeholder - 2
     if (pos == 2) {
