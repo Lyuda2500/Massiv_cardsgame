@@ -144,7 +144,7 @@ var WorldScene = new Phaser.Class({
   startDrag(pointer, targets) {
     this.dragObj = targets[0];
     //Секция обработки кнопки "Отмена хода"
-    if (pointer.y > undo_y - 15 && pointer.y < undo_y + 15 && pointer.x > undo_x - 15 && pointer.x < undo_x + 15) {
+    if (pointer.y > undo_y - 15 && pointer.y < undo_y + 15 && pointer.x > undo_x - 15 && pointer.x < undo_x + 15 && this.undo[this.undo.length - 1].pl > 0) {
       //Визуальный перенос
       console.log(this.undo[this.undo.length - 1].sx);
       eval("this.deck" + this.undo[this.undo.length - 1].pl_out + "[this.deck" + this.undo[this.undo.length - 1].pl_out + ".length - 1].x = this.undo[this.undo.length - 1].sx");
